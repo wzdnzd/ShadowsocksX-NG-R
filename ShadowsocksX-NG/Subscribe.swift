@@ -18,14 +18,17 @@ import Alamofire
     var groupName = ""
     var token = ""
     var cache = ""
+    var filter = ""
     
     var profileMgr: ServerProfileManager!
     
-    init(initUrlString:String, initGroupName: String, initToken: String, initMaxCount: Int,initActive: Bool,initAutoUpdate:Bool){
+    init(initUrlString:String, initGroupName: String, initToken: String, initFilter: String, initMaxCount: Int,initActive: Bool,initAutoUpdate:Bool){
         super.init()
         subscribeFeed = initUrlString
 
         token = initToken
+        
+        filter = initFilter
         
         isActive = initActive
         
@@ -56,6 +59,13 @@ import Alamofire
     func getAutoUpdateEnable() -> Bool {
         return autoUpdateEnable
     }
+    func getFilter() -> String {
+        return filter
+    }
+    
+    func setFilter(filter: String) {
+        self.filter = filter.trimmingCharacters(in: CharacterSet.whitespaces)
+    }
     
     func setGroupName(newGroupName: String) {
         func getGroupNameFromRes(resString: String) {
@@ -82,6 +92,7 @@ import Alamofire
     static func fromDictionary(_ data:[String:AnyObject]) -> Subscribe {
         var feed:String = ""
         var group:String = ""
+        var filter:String = ""
         var token:String = ""
         var maxCount:Int = -1
         var isActive:Bool = true
@@ -94,6 +105,8 @@ import Alamofire
                 feed = value as! String
             case "group":
                 group = value as! String
+            case "filter":
+                filter = value as! String
             case "token":
                 token = value as! String
             case "maxCount":
@@ -106,13 +119,14 @@ import Alamofire
                 print("")
             }
         }
-        return Subscribe.init(initUrlString: feed, initGroupName: group, initToken: token, initMaxCount: maxCount,initActive: isActive,initAutoUpdate: autoUpdateEnable)
+        return Subscribe.init(initUrlString: feed, initGroupName: group, initToken: token, initFilter: filter, initMaxCount: maxCount,initActive: isActive,initAutoUpdate: autoUpdateEnable)
     }
     static func toDictionary(_ data: Subscribe) -> [String: AnyObject] {
         var ret : [String: AnyObject] = [:]
         ret["feed"] = data.subscribeFeed as AnyObject
         ret["group"] = data.groupName as AnyObject
         ret["token"] = data.token as AnyObject
+        ret["filter"] = data.filter as AnyObject
         ret["maxCount"] = data.maxCount as AnyObject
         ret["isActive"] = data.isActive as AnyObject
         ret["autoUpdateEnable"] = data.autoUpdateEnable as AnyObject
@@ -160,22 +174,43 @@ import Alamofire
             self.cache = resString
         })
     }
-    func updateServerFromFeed(){
-        func updateServerHandler(resString: String) {
+    func updateServerFromFeed(delete: Bool=false){
+        func updateServerHandler(resString: String, delete: Bool=false) {
             let decodeRes = decode64(resString)!
             let ssrregexp = "ssr://([A-Za-z0-9_-]+)"
             let urls = splitor(url: decodeRes, regexp: ssrregexp)
             // hold if user fill a maxCount larger then server return
-            // Should push a notification about it and correct the user filled maxCOunt?
+            // Should push a notification about it and correct the user filled maxCount?
             let maxN = (self.maxCount > urls.count) ? urls.count : (self.maxCount == -1) ? urls.count: self.maxCount
             // TODO change the loop into random pick
             var profiles = [ServerProfile]()
-            for index in 0..<maxN {
-                if let profileDict = ParseAppURLSchemes(URL(string: urls[index])) {
-                    let profile = ServerProfile.fromDictionary(profileDict as [String : AnyObject])
-                    profiles.append(profile)
+            
+            var regex: NSRegularExpression?
+            
+            if !self.filter.isEmpty {
+                do {
+                    regex = try NSRegularExpression(pattern: self.filter, options:.caseInsensitive)
+                }catch{
+                    regex = nil
                 }
             }
+            
+            var count = 0
+            for index in 0..<urls.count {
+                if let profileDict = ParseAppURLSchemes(URL(string: urls[index])) {
+                    let profile = ServerProfile.fromDictionary(profileDict as [String : AnyObject])
+                    let result = regex?.matches(in: profile.remark, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSMakeRange(0, profile.remark.count))
+                    
+                    if regex == nil || result!.count <= 0 {
+                        profiles.append(profile)
+                        count += 1
+                        }
+                    }
+                if count > maxN {
+                    break
+                }
+            }
+            
             // clear and add
             let clearOldGroup = true
             let group = profiles.first?.ssrGroup
@@ -187,36 +222,40 @@ import Alamofire
                 cleanCount = self.profileMgr.profiles.filter { $0.ssrGroup == group }.count
                 self.profileMgr.profiles = self.profileMgr.profiles.filter { $0.ssrGroup != group || $0 == activeProfile}
             }
-            
-            var successCount = 0
-            var dupCount = 0
-            var existCount = 0
-            for profile in profiles {
-                let (dupResult, _) = self.profileMgr.isDuplicated(profile: profile)
-                let (existResult, existIndex) = self.profileMgr.isExisted(profile: profile)
-                if dupResult {
-                    dupCount += 1
-                    continue
+                        
+            if !delete {
+                var successCount = 0
+                var dupCount = 0
+                var existCount = 0
+                for profile in profiles {
+                    let (dupResult, _) = self.profileMgr.isDuplicated(profile: profile)
+                    let (existResult, existIndex) = self.profileMgr.isExisted(profile: profile)
+                    if dupResult {
+                        dupCount += 1
+                        continue
+                    }
+                    if existResult {
+                        self.profileMgr.profiles.replaceSubrange((existIndex..<existIndex + 1), with: [profile])
+                        existCount += 1
+                        continue
+                    }
+                    self.profileMgr.profiles.append(profile)
+                    successCount += 1
                 }
-                if existResult {
-                    self.profileMgr.profiles.replaceSubrange((existIndex..<existIndex + 1), with: [profile])
-                    existCount += 1
-                    continue
-                }
-                self.profileMgr.profiles.append(profile)
-                successCount += 1
+                
+                pushNotification(title: "成功更新订阅", subtitle: "总数:\(maxN) 成功:\(successCount) 清除:\(cleanCount) 重复:\(dupCount) 已存在:\(existCount)", info: "更新来自\(subscribeFeed)的订阅")
             }
+            
             self.profileMgr.save()
-            pushNotification(title: "成功更新订阅", subtitle: "总数:\(maxN) 成功:\(successCount) 清除:\(cleanCount) 重复:\(dupCount) 已存在:\(existCount)", info: "更新来自\(subscribeFeed)的订阅")
             (NSApplication.shared.delegate as! AppDelegate).updateServersMenu()
             (NSApplication.shared.delegate as! AppDelegate).updateRunningModeMenu()
         }
         
-        if (!isActive){ return }
+        if !isActive && !delete { return }
 
         sendRequest(url: self.subscribeFeed, options: "", callback: { resString in
             if resString == "" { return }
-            updateServerHandler(resString: resString)
+            updateServerHandler(resString: resString, delete: delete)
             self.cache = resString
         })
     }
