@@ -38,6 +38,7 @@ class SubscribeManager:NSObject{
         return true
     }
     func deleteSubscribe(atIndex: Int) -> Bool {
+        subscribes[atIndex].updateServerFromFeed(delete: true)
         subscribes.remove(at: atIndex)
         return true
     }

@@ -9,20 +9,21 @@
 import Cocoa
 
 class SubscribePreferenceWindowController: NSWindowController
-    , NSTableViewDataSource, NSTableViewDelegate {
-
+, NSTableViewDataSource, NSTableViewDelegate {
+    
     @IBOutlet weak var FeedLabel: NSTextField!
     @IBOutlet weak var OKButton: NSButton!
-
+    
     @IBOutlet weak var ActiveButton: NSButton!
     @IBOutlet weak var AutoUpdateButton: NSButton!
     
     @IBOutlet weak var FeedTextField: NSTextField!
     @IBOutlet weak var TokenTextField: NSTextField!
     @IBOutlet weak var GroupTextField: NSTextField!
+    @IBOutlet weak var FilterTextField: NSTextField!
     @IBOutlet weak var MaxCountTextField: NSTextField!
     @IBOutlet weak var SubscribeTableView: NSTableView!
-
+    
     @IBOutlet weak var AddSubscribeBtn: NSButton!
     @IBOutlet weak var DeleteSubscribeBtn: NSButton!
     
@@ -33,7 +34,7 @@ class SubscribePreferenceWindowController: NSWindowController
     
     override func windowDidLoad() {
         super.windowDidLoad()
-
+        
         sbMgr = SubscribeManager.instance
         defaults = UserDefaults.standard
         SubscribeTableView.reloadData()
@@ -53,7 +54,7 @@ class SubscribePreferenceWindowController: NSWindowController
                 return
             }
             
-            if editingSubscribe.isActive{
+            if editingSubscribe.isActive {
                 editingSubscribe.updateServerFromFeed()
             }
         }
@@ -82,7 +83,7 @@ class SubscribePreferenceWindowController: NSWindowController
             }
         }
     }
-
+    
     
     @IBAction func onAdd(_ sender: NSButton) {
         if editingSubscribe != nil && !editingSubscribe.feedValidator(){
@@ -90,7 +91,7 @@ class SubscribePreferenceWindowController: NSWindowController
             return
         }
         SubscribeTableView.beginUpdates()
-        let subscribe = Subscribe(initUrlString: "", initGroupName: "", initToken: "", initMaxCount: -1, initActive: true,initAutoUpdate: true)
+        let subscribe = Subscribe(initUrlString: "", initGroupName: "", initToken: "", initFilter: "", initMaxCount: -1, initActive: true, initAutoUpdate: true)
         sbMgr.subscribes.append(subscribe)
         
         let index = IndexSet(integer: sbMgr.subscribes.count-1)
@@ -128,6 +129,7 @@ class SubscribePreferenceWindowController: NSWindowController
             FeedTextField.isEnabled = false
             TokenTextField.isEnabled = false
             GroupTextField.isEnabled = false
+            FilterTextField.isEnabled = false
             MaxCountTextField.isEnabled = false
             ActiveButton.isEnabled = false
             AutoUpdateButton.isEnabled = false
@@ -136,6 +138,7 @@ class SubscribePreferenceWindowController: NSWindowController
             FeedTextField.isEnabled = true
             TokenTextField.isEnabled = true
             GroupTextField.isEnabled = true
+            FilterTextField.isEnabled = true
             MaxCountTextField.isEnabled = true
             ActiveButton.isEnabled = true
             AutoUpdateButton.isEnabled = true
@@ -149,16 +152,18 @@ class SubscribePreferenceWindowController: NSWindowController
             FeedTextField.bind(NSBindingName(rawValue: "value"), to: editingSubscribe!, withKeyPath: "subscribeFeed", options: convertToOptionalNSBindingOptionDictionary([convertFromNSBindingOption(NSBindingOption.continuouslyUpdatesValue): true]))
             TokenTextField.bind(NSBindingName(rawValue: "value"), to: editingSubscribe!, withKeyPath: "token", options: convertToOptionalNSBindingOptionDictionary([convertFromNSBindingOption(NSBindingOption.continuouslyUpdatesValue): true]))
             GroupTextField.bind(NSBindingName(rawValue: "value"), to: editingSubscribe!, withKeyPath: "groupName", options: convertToOptionalNSBindingOptionDictionary([convertFromNSBindingOption(NSBindingOption.continuouslyUpdatesValue): true]))
+            FilterTextField.bind(NSBindingName(rawValue: "value"), to: editingSubscribe!, withKeyPath: "filter", options: convertToOptionalNSBindingOptionDictionary([convertFromNSBindingOption(NSBindingOption.continuouslyUpdatesValue): true]))
             MaxCountTextField.bind(NSBindingName(rawValue: "value"), to: editingSubscribe!, withKeyPath: "maxCount", options: convertToOptionalNSBindingOptionDictionary([convertFromNSBindingOption(NSBindingOption.continuouslyUpdatesValue): true]))
             ActiveButton.bind(NSBindingName(rawValue: "value"), to: editingSubscribe!, withKeyPath: "isActive", options: convertToOptionalNSBindingOptionDictionary([convertFromNSBindingOption(NSBindingOption.continuouslyUpdatesValue): true]))
             AutoUpdateButton.bind(NSBindingName(rawValue: "value"), to: editingSubscribe!, withKeyPath: "autoUpdateEnable", options: convertToOptionalNSBindingOptionDictionary([convertFromNSBindingOption(NSBindingOption.continuouslyUpdatesValue): true]))
-
+            
             
         } else {
             editingSubscribe = nil
             FeedTextField.unbind(convertToNSBindingName("value"))
             TokenTextField.unbind(convertToNSBindingName("value"))
             GroupTextField.unbind(convertToNSBindingName("value"))
+            FilterTextField.unbind(convertToNSBindingName("value"))
             MaxCountTextField.unbind(convertToNSBindingName("value"))
             ActiveButton.unbind(convertToNSBindingName("value"))
             AutoUpdateButton.unbind(convertToNSBindingName("value"))
@@ -187,22 +192,22 @@ class SubscribePreferenceWindowController: NSWindowController
         
         let title = getDataAtRow(row)
         
-//        if convertFromNSUserInterfaceItemIdentifier(tableColumn?.identifier) == "main" {
-//            if title != "" {return title}
-//            else {return "S"}
-//        } else if convertFromNSUserInterfaceItemIdentifier(tableColumn?.identifier) == "status" {
-//            return NSImage(named: "menu_icon")
-//        }
+        //        if convertFromNSUserInterfaceItemIdentifier(tableColumn?.identifier) == "main" {
+        //            if title != "" {return title}
+        //            else {return "S"}
+        //        } else if convertFromNSUserInterfaceItemIdentifier(tableColumn?.identifier) == "status" {
+        //            return NSImage(named: "menu_icon")
+        //        }
         
         if tableColumn?.identifier == NSUserInterfaceItemIdentifier("main") {
             if title != "" {return title}
             else {return "S"}
         } else if tableColumn?.identifier == NSUserInterfaceItemIdentifier("status") {
-
+            
             return NSImage(named: NSImage.Name("menu_icon"))
-
+            
         }
-
+        
         return ""
     }
     
@@ -226,11 +231,11 @@ class SubscribePreferenceWindowController: NSWindowController
         , row: Int, dropOperation: NSTableView.DropOperation) -> Bool {
         if let mgr = sbMgr {
             var oldIndexes = [Int]()
-//            info.enumerateDraggingItems(options: [], for: tableView, classes: [NSPasteboardItem.self], searchOptions: [:]) {,<#arg#>,<#arg#> ,<#arg#>,<#arg#> ,<#arg#>,<#arg#> ,<#arg#>,<#arg#> ,<#arg#>,<#arg#> ,<#arg#>,<#arg#> ,<#arg#>,<#arg#>
-//                if let str = ($0.item as! NSPasteboardItem).string(forType: convertToNSPasteboardPasteboardType(self.tableViewDragType)), let index = Int(str) {
-//                    oldIndexes.append(index)
-//                }
-//            }
+            //            info.enumerateDraggingItems(options: [], for: tableView, classes: [NSPasteboardItem.self], searchOptions: [:]) {,<#arg#>,<#arg#> ,<#arg#>,<#arg#> ,<#arg#>,<#arg#> ,<#arg#>,<#arg#> ,<#arg#>,<#arg#> ,<#arg#>,<#arg#> ,<#arg#>,<#arg#>
+            //                if let str = ($0.item as! NSPasteboardItem).string(forType: convertToNSPasteboardPasteboardType(self.tableViewDragType)), let index = Int(str) {
+            //                    oldIndexes.append(index)
+            //                }
+            //            }
             
             info.enumerateDraggingItems(options: [], for: tableView, classes: [NSPasteboardItem.self], searchOptions: [:], using: {
                 (draggingItem: NSDraggingItem, idx: Int, stop: UnsafeMutablePointer<ObjCBool>) in
@@ -238,7 +243,7 @@ class SubscribePreferenceWindowController: NSWindowController
                     oldIndexes.append(index)
                 }
             })
-
+            
             
             var oldIndexOffset = 0
             var newIndexOffset = 0
@@ -279,11 +284,11 @@ class SubscribePreferenceWindowController: NSWindowController
             editingSubscribe = nil
             return true
         }
-//        if editingSubscribe != nil {
-//            if !editingSubscribe.isValid() {
-//                return false
-//            }
-//        }
+        //        if editingSubscribe != nil {
+        //            if !editingSubscribe.isValid() {
+        //                return false
+        //            }
+        //        }
         
         return true
     }
@@ -292,9 +297,9 @@ class SubscribePreferenceWindowController: NSWindowController
         if SubscribeTableView.selectedRow >= 0 {
             bindSubscribe(SubscribeTableView.selectedRow)
             if (SubscribeTableView.selectedRowIndexes.count > 1){
-//                duplicateProfileButton.isEnabled = false
+                //                duplicateProfileButton.isEnabled = false
             } else {
-//                duplicateProfileButton.isEnabled = true
+                //                duplicateProfileButton.isEnabled = true
             }
             if !editingSubscribe.isActive{
                 AutoUpdateButton.isEnabled = false
@@ -311,6 +316,7 @@ class SubscribePreferenceWindowController: NSWindowController
         FeedTextField.stringValue = ""
         TokenTextField.stringValue = ""
         GroupTextField.stringValue = ""
+        FilterTextField.stringValue = ""
         MaxCountTextField.stringValue = ""
     }
     
@@ -341,31 +347,31 @@ class SubscribePreferenceWindowController: NSWindowController
 
 // Helper function inserted by Swift 4.2 migrator.
 fileprivate func convertToNSPasteboardPasteboardTypeArray(_ input: [String]) -> [NSPasteboard.PasteboardType] {
-	return input.map { key in NSPasteboard.PasteboardType(key) }
+    return input.map { key in NSPasteboard.PasteboardType(key) }
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 fileprivate func convertToOptionalNSBindingOptionDictionary(_ input: [String: Any]?) -> [NSBindingOption: Any]? {
-	guard let input = input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSBindingOption(rawValue: key), value)})
+    guard let input = input else { return nil }
+    return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSBindingOption(rawValue: key), value)})
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 fileprivate func convertFromNSBindingOption(_ input: NSBindingOption) -> String {
-	return input.rawValue
+    return input.rawValue
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 fileprivate func convertToNSBindingName(_ input: String) -> NSBindingName {
-	return NSBindingName(rawValue: input)
+    return NSBindingName(rawValue: input)
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 fileprivate func convertFromNSUserInterfaceItemIdentifier(_ input: NSUserInterfaceItemIdentifier) -> String {
-	return input.rawValue
+    return input.rawValue
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 fileprivate func convertToNSPasteboardPasteboardType(_ input: String) -> NSPasteboard.PasteboardType {
-	return NSPasteboard.PasteboardType(rawValue: input)
+    return NSPasteboard.PasteboardType(rawValue: input)
 }
