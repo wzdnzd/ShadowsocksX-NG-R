@@ -252,12 +252,6 @@ import Alamofire
             self.profileMgr.save()
             (NSApplication.shared.delegate as! AppDelegate).updateServersMenu()
             (NSApplication.shared.delegate as! AppDelegate).updateRunningModeMenu()
-            //每次更新订阅后自动测试延时
-            if !delete {
-                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+1) {
-                    PingServers.instance.ping()
-                }
-            }
         }
         
         if !isActive && !delete { return }

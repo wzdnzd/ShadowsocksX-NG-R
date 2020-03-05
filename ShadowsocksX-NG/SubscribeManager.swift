@@ -72,5 +72,10 @@ class SubscribeManager:NSObject{
                 }
             }
         }
+        
+        //每次更新订阅后自动测试延时
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+1) {
+            PingServers.instance.ping()
+        }
     }
 }

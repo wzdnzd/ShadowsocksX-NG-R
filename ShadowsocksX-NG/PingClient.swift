@@ -10,14 +10,14 @@
 import Foundation
 
 fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
-  switch (lhs, rhs) {
-  case let (l?, r?):
-    return l < r
-  case (nil, _?):
-    return true
-  default:
-    return false
-  }
+    switch (lhs, rhs) {
+    case let (l?, r?):
+        return l < r
+    case (nil, _?):
+        return true
+    default:
+        return false
+    }
 }
 
 
@@ -131,8 +131,8 @@ class PingServers:NSObject{
     }
     
     
-
-    func ping(_ i:Int=0){
+    
+    func ping(_ i:Int=0, active:Bool=true){
         
         neverSpeedTestBefore = false
         
@@ -148,22 +148,24 @@ class PingServers:NSObject{
                         }
                     }
                 }
-
+                
                 // do the UI update HERE
                 if let min = result.min(by: {$0.1 < $1.1}){
                     self.fastest = String(describing: min.1)
                     self.fastest_id  = min.0
                     
                     // 将延迟最短的服务设置为当前代理
-                    self.SerMgr.activeProfileId = self.SerMgr.profiles[self.fastest_id].uuid
+                    if active {
+                        self.SerMgr.activeProfileId = self.SerMgr.profiles[self.fastest_id].uuid
+                    }
                     
                     let notice = NSUserNotification()
-                    notice.title = "Ping测试完成！最快\(self.SerMgr.profiles[self.fastest_id].latency!)ms"
+                    notice.title = "Ping测试完成！最快\(min.1)ms"
                     notice.subtitle = "最快的是\(self.SerMgr.profiles[self.fastest_id].serverHost) \(self.SerMgr.profiles[self.fastest_id].remark)"
                     
                     NSUserNotificationCenter.default.deliver(notice)
                     
-                    UserDefaults.standard.setValue("\(self.SerMgr.profiles[self.fastest_id].latency!)", forKey: "FastestNode")
+                    UserDefaults.standard.setValue("\(min.1)", forKey: "FastestNode")
                     UserDefaults.standard.synchronize()
                     
                     DispatchQueue.main.async {
