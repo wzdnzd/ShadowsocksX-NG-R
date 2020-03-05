@@ -219,9 +219,10 @@ import Alamofire
             var cleanCount = 0
             if groupSame && clearOldGroup {
                 // 原有的 group 中的 profile 全部清除
-                let activeProfile = self.profileMgr.getActiveProfile()
+                // let activeProfile = self.profileMgr.getActiveProfile()
                 cleanCount = self.profileMgr.profiles.filter { $0.ssrGroup == group }.count
-                self.profileMgr.profiles = self.profileMgr.profiles.filter { $0.ssrGroup != group || $0 == activeProfile}
+                // self.profileMgr.profiles = self.profileMgr.profiles.filter { $0.ssrGroup != group || $0 == activeProfile}
+                self.profileMgr.profiles = self.profileMgr.profiles.filter { $0.ssrGroup != group}
             }
             
             

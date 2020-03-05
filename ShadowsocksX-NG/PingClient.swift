@@ -153,6 +153,10 @@ class PingServers:NSObject{
                 if let min = result.min(by: {$0.1 < $1.1}){
                     self.fastest = String(describing: min.1)
                     self.fastest_id  = min.0
+                    
+                    // 将延迟最短的服务设置为当前代理
+                    self.SerMgr.activeProfileId = self.SerMgr.profiles[self.fastest_id].uuid
+                    
                     let notice = NSUserNotification()
                     notice.title = "Ping测试完成！最快\(self.SerMgr.profiles[self.fastest_id].latency!)ms"
                     notice.subtitle = "最快的是\(self.SerMgr.profiles[self.fastest_id].serverHost) \(self.SerMgr.profiles[self.fastest_id].remark)"
