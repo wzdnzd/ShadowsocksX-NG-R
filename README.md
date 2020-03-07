@@ -7,7 +7,7 @@
 
 - 爱国富强的前提是自己要有独立思考问题的能力，而不是秀智力
 
-- 下载地址：[release](https://github.com/wzdnzd/ShadowsocksX-NG-R/releases)
+- 下载地址：[releases](https://github.com/wzdnzd/ShadowsocksX-NG-R/releases)
 
 
 # ShadowsocksX-NG-R
