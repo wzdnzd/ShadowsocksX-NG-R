@@ -67,9 +67,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
     var statusItem: NSStatusItem?
     var speedMonitor:NetWorkMonitor?
     var globalSubscribeFeed: Subscribe!
-
+    
     // MARK: Application function
-
+    
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
         
@@ -104,26 +104,26 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
             "Subscribes": [],
             "AutoUpdateSubscribe":false,
         ])
-
+        
         setUpMenu(defaults.bool(forKey: "enable_showSpeed"))
         
-//        statusItem = NSStatusBar.system.statusItem(withLength: 20)
-//        let image = NSImage(named: "menu_icon")
-//        image?.isTemplate = true
-//        statusItem?.image = image
-//        statusItem?.menu = statusMenu
-
+        //        statusItem = NSStatusBar.system.statusItem(withLength: 20)
+        //        let image = NSImage(named: "menu_icon")
+        //        image?.isTemplate = true
+        //        statusItem?.image = image
+        //        statusItem?.menu = statusMenu
+        
         let notifyCenter = NotificationCenter.default
         notifyCenter.addObserver(forName: NSNotification.Name(rawValue: NOTIFY_ADV_PROXY_CONF_CHANGED), object: nil, queue: nil
             , using: {
-            (note) in
+                (note) in
                 self.applyConfig()
                 self.updateCopyHttpProxyExportMenu()
-            }
+        }
         )
         notifyCenter.addObserver(forName: NSNotification.Name(rawValue: NOTIFY_SERVER_PROFILES_CHANGED), object: nil, queue: nil
             , using: {
-            (note) in
+                (note) in
                 let profileMgr = ServerProfileManager.instance
                 if profileMgr.getActiveProfileId() == "" &&
                     profileMgr.profiles.count > 0{
@@ -135,21 +135,21 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
                 self.updateMainMenu()
                 self.updateRunningModeMenu()
                 SyncSSLocal()
-            }
+        }
         )
         notifyCenter.addObserver(forName: NSNotification.Name(rawValue: NOTIFY_ADV_CONF_CHANGED), object: nil, queue: nil
             , using: {
-            (note) in
+                (note) in
                 SyncSSLocal()
                 self.applyConfig()
-            }
+        }
         )
         notifyCenter.addObserver(forName: NSNotification.Name(rawValue: NOTIFY_HTTP_CONF_CHANGED), object: nil, queue: nil
             , using: {
                 (note) in
                 SyncPrivoxy()
                 self.applyConfig()
-            }
+        }
         )
         notifyCenter.addObserver(forName: NSNotification.Name(rawValue: "NOTIFY_FOUND_SS_URL"), object: nil, queue: nil) {
             (note: Notification) in
@@ -207,8 +207,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
         
         ProxyConfHelper.install()
         applyConfig()
-//        SyncSSLocal()
-
+        //        SyncSSLocal()
+        
         if defaults.bool(forKey: "ConnectAtLaunch") && ServerProfileManager.instance.getActiveProfileId() != "" {
             defaults.set(false, forKey: "ShadowsocksOn")
             defaults.synchronize()
@@ -224,11 +224,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
                 SubscribeManager.instance.updateAllServerFromSubscribe(auto: true)
             }
             DispatchQueue.main.async {
-
+                
             }
         }
     }
-
+    
     func applicationWillTerminate(_ aNotification: Notification) {
         // Insert code here to tear down your application
         self.stopSSR()
@@ -268,7 +268,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
         } else {
             self.stopSSR()
         }
-
+        
     }
     
     // MARK: Mainmenu functions
@@ -281,7 +281,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
         SyncSSLocal()
         applyConfig()
     }
-
+    
     @IBAction func updateGFWList(_ sender: NSMenuItem) {
         UpdatePACFromGFWList()
     }
@@ -296,7 +296,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
         }
         let ctrl = UserRulesController(windowNibName: "UserRulesController")
         editUserRulesWinCtrl = ctrl
-
+        
         ctrl.showWindow(self)
         NSApp.activate(ignoringOtherApps: true)
         ctrl.window?.makeKeyAndOrderFront(self)
@@ -348,7 +348,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
     }
     
     // MARK: Server submenu function
-
+    
     @IBAction func showQRCodeForCurrentServer(_ sender: NSMenuItem) {
         var errMsg: String?
         if let profile = ServerProfileManager.instance.getActiveProfile() {
@@ -396,7 +396,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
                         , userInfo: [
                             "urls": [url],
                             "source": "pasteboard",
-                            ])
+                    ])
                 }
             }
         }
@@ -413,22 +413,22 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
                 , userInfo: [
                     "urls": urls,
                     "source": "pasteboard",
-                    ])
+            ])
         }
         
         //
-//        if let urlString = event.paramDescriptor(forKeyword: AEKeyword(keyDirectObject))?.stringValue {
-//            if URL(string: urlString) != nil {
-//                NotificationCenter.default.post(
-//                    name: Notification.Name(rawValue: "NOTIFY_FOUND_SS_URL"), object: nil
-//                    , userInfo: [
-//                        "urls": splitProfile(url: urlString, max: 5).map({ (item: String) -> URL in
-//                            return URL(string: item)!
-//                        }),
-//                        "source": "url",
-//                        ])
-//            }
-//        }
+        //        if let urlString = event.paramDescriptor(forKeyword: AEKeyword(keyDirectObject))?.stringValue {
+        //            if URL(string: urlString) != nil {
+        //                NotificationCenter.default.post(
+        //                    name: Notification.Name(rawValue: "NOTIFY_FOUND_SS_URL"), object: nil
+        //                    , userInfo: [
+        //                        "urls": splitProfile(url: urlString, max: 5).map({ (item: String) -> URL in
+        //                            return URL(string: item)!
+        //                        }),
+        //                        "source": "url",
+        //                        ])
+        //            }
+        //        }
     }
     
     @IBAction func showBunchJsonExampleFile(_ sender: NSMenuItem) {
@@ -457,7 +457,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
     
     
     // MARK: Proxy submenu function
-
+    
     @IBAction func selectPACMode(_ sender: NSMenuItem) {
         let defaults = UserDefaults.standard
         defaults.setValue("auto", forKey: "ShadowsocksRunningMode")
@@ -514,7 +514,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
         SyncSSLocal()
         applyConfig()
     }
-
+    
     @IBAction func editServerPreferences(_ sender: NSMenuItem) {
         if preferencesWinCtrl != nil {
             preferencesWinCtrl.close()
@@ -551,14 +551,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
         ctrl.window?.makeKeyAndOrderFront(self)
     }
     
-    @IBAction func editProxyPreferences(_ sender: NSObject) {
+    @IBAction func editProxyPreferences(_ sender: NSMenuItem) {
         if proxyPreferencesWinCtrl != nil {
             proxyPreferencesWinCtrl.close()
         }
-        proxyPreferencesWinCtrl = ProxyPreferencesController(windowNibName: "ProxyPreferencesController")
-        proxyPreferencesWinCtrl.showWindow(self)
+        let ctrl = ProxyPreferencesController(windowNibName: "ProxyPreferencesController")
+        proxyPreferencesWinCtrl = ctrl
+        
+        ctrl.showWindow(self)
         NSApp.activate(ignoringOtherApps: true)
-        proxyPreferencesWinCtrl.window?.makeKeyAndOrderFront(self)
+        ctrl.window?.makeKeyAndOrderFront(self)
     }
     
     @IBAction func selectServer(_ sender: NSMenuItem) {
@@ -572,7 +574,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
         }
         updateRunningModeMenu()
     }
-
+    
     @IBAction func doPingTest(_ sender: AnyObject) {
         PingServers.instance.ping()
     }
@@ -586,7 +588,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
         defaults.synchronize()
         updateMainMenu()
     }
-
+    
     //https://git.codingcafe.org/Mirrors/shadowsocks/ShadowsocksX-NG/blob/d56b108eb8a8087337b2c9c9ccc6743f5f9944a9/ShadowsocksX-NG/AppDelegate.swift
     @IBAction func showLogs2(_ sender: NSMenuItem) {
         let ws = NSWorkspace.shared
@@ -604,7 +606,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
                 ,configuration: [NSWorkspace.LaunchConfigurationKey.arguments: "~/Library/Logs/ss-local.log"])
         }
     }
-
+    
     
     @IBAction func feedback(_ sender: NSMenuItem) {
         NSWorkspace.shared.open(URL(string: "https://github.com/wzdnzd/ShadowsocksX-NG-R/issues")!)
@@ -631,7 +633,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
     }
     
     // MARK: this function is use to update menu bar
-
+    
     func updateRunningModeMenu() {
         let defaults = UserDefaults.standard
         let mode = defaults.string(forKey: "ShadowsocksRunningMode")
@@ -655,7 +657,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
                 }
             }
         }
-
+        
         serversMenuItem.title = serverMenuText
         autoModeMenuItem.state = convertToNSControlStateValue(0)
         globalModeMenuItem.state = convertToNSControlStateValue(0)
@@ -830,7 +832,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
                 }
             }
             
-//            serversMenuItem.submenu?.addItem(item)
+            //            serversMenuItem.submenu?.addItem(item)
             serverMenuItems.append(item)
             i += 1
         }
@@ -881,7 +883,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
     }
     
     // MARK:
-
+    
     @objc func handleURLEvent(_ event: NSAppleEventDescriptor, withReplyEvent replyEvent: NSAppleEventDescriptor) {
         if let urlString = event.paramDescriptor(forKeyword: AEKeyword(keyDirectObject))?.stringValue {
             if URL(string: urlString) != nil {
@@ -892,7 +894,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
                             return URL(string: item)!
                         }),
                         "source": "url",
-                    ])
+                ])
             }
         }
     }
@@ -922,15 +924,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
 
 // Helper function inserted by Swift 4.2 migrator.
 fileprivate func convertToNSWorkspaceLaunchConfigurationKeyDictionary(_ input: [String: Any]) -> [NSWorkspace.LaunchConfigurationKey: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSWorkspace.LaunchConfigurationKey(rawValue: key), value)})
+    return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSWorkspace.LaunchConfigurationKey(rawValue: key), value)})
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 fileprivate func convertFromNSWorkspaceLaunchConfigurationKey(_ input: NSWorkspace.LaunchConfigurationKey) -> String {
-	return input.rawValue
+    return input.rawValue
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 fileprivate func convertToNSControlStateValue(_ input: Int) -> NSControl.StateValue {
-	return NSControl.StateValue(rawValue: input)
+    return NSControl.StateValue(rawValue: input)
 }

@@ -1,10 +1,3 @@
-
-/* Class = "NSTextFieldCell"; placeholderString = "Optional"; ObjectID = "3kt-n3-uTF"; */
-"3kt-n3-uTF.placeholderString" = "Optional";
-
-/* Class = "NSTextFieldCell"; placeholderString = "Optional"; ObjectID = "ASh-mc-Uyt"; */
-"ASh-mc-Uyt.placeholderString" = "Optional";
-
 /* Class = "NSButtonCell"; title = "OK"; ObjectID = "CfK-8Y-YNP"; */
 "CfK-8Y-YNP.title" = "OK";
 
@@ -19,9 +12,6 @@
 
 /* Class = "NSTextFieldCell"; title = "Filter"; ObjectID = "rJV-YA-Cc9"; */
 "rJV-YA-Cc9.title" = "过滤";
-
-/* Class = "NSTextFieldCell"; placeholderString = "Optional"; ObjectID = "rc1-l2-7Mh"; */
-"rc1-l2-7Mh.placeholderString" = "Optional";
 
 /* Class = "NSButtonCell"; title = "AutoUpdate"; ObjectID = "wAH-F1-KhY"; */
 "wAH-F1-KhY.title" = "自动更新";
