@@ -282,6 +282,14 @@ import Alamofire
     class func isSame(source: Subscribe, target: Subscribe) -> Bool {
         return source.subscribeFeed == target.subscribeFeed && source.token == target.token && source.maxCount == target.maxCount
     }
+    
+    class func isChanged(source: Subscribe, target: Subscribe) -> Bool {        
+        return !((source.filter == target.filter)
+            && (source.autoUpdateEnable == target.autoUpdateEnable)
+            && (source.isActive == target.isActive)
+            && (isSame(source: source, target: target)))
+    }
+    
     func isExist(_ target: Subscribe) -> Bool {
         return self.subscribeFeed == target.subscribeFeed
     }

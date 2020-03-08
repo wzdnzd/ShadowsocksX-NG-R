@@ -156,7 +156,7 @@ class PingServers:NSObject{
                     
                     // 将延迟最短的服务设置为当前代理
                     if active {
-                        self.SerMgr.activeProfileId = self.SerMgr.profiles[self.fastest_id].uuid
+                        self.SerMgr.setActiveProfiledId(self.SerMgr.profiles[self.fastest_id].uuid)
                     }
                     
                     let notice = NSUserNotification()

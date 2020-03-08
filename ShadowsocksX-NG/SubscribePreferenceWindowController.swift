@@ -157,7 +157,6 @@ class SubscribePreferenceWindowController: NSWindowController
             ActiveButton.bind(NSBindingName(rawValue: "value"), to: editingSubscribe!, withKeyPath: "isActive", options: convertToOptionalNSBindingOptionDictionary([convertFromNSBindingOption(NSBindingOption.continuouslyUpdatesValue): true]))
             AutoUpdateButton.bind(NSBindingName(rawValue: "value"), to: editingSubscribe!, withKeyPath: "autoUpdateEnable", options: convertToOptionalNSBindingOptionDictionary([convertFromNSBindingOption(NSBindingOption.continuouslyUpdatesValue): true]))
             
-            
         } else {
             editingSubscribe = nil
             FeedTextField.unbind(convertToNSBindingName("value"))
