@@ -1,13 +1,15 @@
 
-/* Class = "NSWindow"; title = "Advance Proxy Preferences"; ObjectID = "F0z-JX-Cv5"; */
+/* Class = "NSWindow"; title = "Window"; ObjectID = "F0z-JX-Cv5"; */
 "F0z-JX-Cv5.title" = "高级代理设置";
 
-/* Class = "NSButtonCell"; title = "Auto Configure"; ObjectID = "FLv-D9-CRw"; */
-"FLv-D9-CRw.title" = "自动设置";
+/* Class = "NSButtonCell"; title = "Auto Configure"; ObjectID = "PLM-bN-S2l"; */
+"PLM-bN-S2l.title" = "自动设置";
 
-/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "lsQ-1C-OhG"; */
-"lsQ-1C-OhG.title" = "取消";
+/* Class = "NSButtonCell"; title = "OK"; ObjectID = "RC9-LO-Vtj"; */
+"RC9-LO-Vtj.title" = "确认";
 
-/* Class = "NSButtonCell"; title = "OK"; ObjectID = "rWE-M6-TvV"; */
-"rWE-M6-TvV.title" = "确定";
+/* Class = "NSButtonCell"; title = "Check"; ObjectID = "ags-0i-LG0"; */
+"ags-0i-LG0.title" = "检查";
 
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "x3n-UE-3xv"; */
+"x3n-UE-3xv.title" = "取消";

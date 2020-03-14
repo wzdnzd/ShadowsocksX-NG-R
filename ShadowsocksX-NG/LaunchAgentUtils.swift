@@ -48,7 +48,7 @@ func generateSSLocalLauchAgentPlist() -> Bool {
     let enableVerboseMode = defaults.bool(forKey: "LocalSocks5.EnableVerboseMode")
     let enabelWhiteListMode = defaults.string(forKey: "ShadowsocksRunningMode")
     
-    var arguments = [sslocalPath, "-c", "ss-local-config.json"]
+    var arguments = [sslocalPath, "-c", "ss-local-config.json", "--fast-open"]
     if enableUdpRelay {
         arguments.append("-u")
     }
@@ -138,7 +138,9 @@ func InstallSSLocal() {
 func writeSSLocalConfFile(_ conf:[String:AnyObject]) -> Bool {
     do {
         let filepath = NSHomeDirectory() + APP_SUPPORT_DIR + "ss-local-config.json"
-        let data: Data = try JSONSerialization.data(withJSONObject: conf, options: .prettyPrinted)
+        var data: Data = try JSONSerialization.data(withJSONObject: conf, options: .prettyPrinted)
+        let s = String(data:data, encoding: .utf8)!
+        data = s.replacingOccurrences(of: "\\/", with: "/").data(using: .utf8)!
         
         let oldSum = getFileSHA1Sum(filepath)
         try data.write(to: URL(fileURLWithPath: filepath), options: .atomic)

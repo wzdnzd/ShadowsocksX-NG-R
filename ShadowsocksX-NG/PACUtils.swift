@@ -83,7 +83,7 @@ func GeneratePACFile() -> Bool {
     if !fileMgr.fileExists(atPath: ACLBackCHNFilePath) {
         let src = Bundle.main.path(forResource: "backchn", ofType: "acl")
         try! fileMgr.copyItem(atPath: src!, toPath: ACLBackCHNFilePath)
-
+        
     }
     // If chn.acl
     if !fileMgr.fileExists(atPath: ACLGFWListFilePath) {
@@ -104,7 +104,21 @@ func GeneratePACFile() -> Bool {
                 let userRuleStr = try String(contentsOfFile: PACUserRuleFilePath, encoding: String.Encoding.utf8)
                 let userRuleLines = userRuleStr.components(separatedBy: CharacterSet.newlines)
                 
-                lines = userRuleLines + lines
+                lines = userRuleLines + lines.filter { (line) in
+                    // 如果用户为相同的网址提供相同的规则，则忽略来自gwf的规则
+                    var i = line.startIndex
+                    while i < line.endIndex {
+                        if line[i] == "@" || line[i] == "|" {
+                            i = line.index(after: i)
+                            continue
+                        }
+                        break
+                    }
+                    if i == line.startIndex {
+                        return !userRuleLines.contains(line)
+                    }
+                    return !userRuleLines.contains(String(line[i...]))
+                }
                 ACLFromUserRule(userRuleLines: userRuleLines)
             } catch {
                 NSLog("Not found user-rule.txt")
@@ -185,7 +199,7 @@ func UpdatePACFromGFWList() {
                 notification.title = "Failed to download latest GFW List.".localized
                 NSUserNotificationCenter.default.deliver(notification)
             }
-        }
+    }
 }
 func ACLFromUserRule(userRuleLines:[String]){
     do {
@@ -207,7 +221,7 @@ func ACLFromUserRule(userRuleLines:[String]){
                 let str = s.replacingOccurrences(of: "@@", with: "").components(separatedBy: ".").joined(separator:"\\.").replacingOccurrences(of: "*\\.", with: "^(.*\\.)?")
                 if (!WhiteACL.contains(str)){
                     WhiteACL += (str + "$\n")
-
+                    
                 }
             }
             if (s.hasPrefix("||")){
