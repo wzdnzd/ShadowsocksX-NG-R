@@ -7,6 +7,8 @@
 #  Copyright © 2016年 qiuyuzhou. All rights reserved.
 
 
+set -e
+
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
 NGDir="$HOME/Library/Application Support/ShadowsocksX-NG-R8"
@@ -20,7 +22,6 @@ cp -f ss-local "$TargetDir"
 ln -sfh "$TargetDir/ss-local" "$NGDir/ss-local"
 
 cp -f libev.4.dylib "$NGDir"
-cp -f libev.4.dylib "~/Downloads/test"
 
 # 2.8.0 https://bintray.com/homebrew/bottles/mbedtls
 cp -f libmbedcrypto.2.16.5.dylib "$NGDir"
