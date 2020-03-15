@@ -8,5 +8,10 @@
 
 #launchctl kill SIGHUP "$HOME/Library/LaunchAgents/com.qiuyuzhou.shadowsocksX-NG.local.plist"
 
+# stop
+launchctl stop com.qiuyuzhou.shadowsocksX-NG.local
 launchctl unload "$HOME/Library/LaunchAgents/com.qiuyuzhou.shadowsocksX-NG.local.plist"
-launchctl load "$HOME/Library/LaunchAgents/com.qiuyuzhou.shadowsocksX-NG.local.plist"
+
+# start
+launchctl load -wF "$HOME/Library/LaunchAgents/com.qiuyuzhou.shadowsocksX-NG.local.plist"
+launchctl start com.qiuyuzhou.shadowsocksX-NG.local

@@ -31,7 +31,7 @@ class PingServers:NSObject{
     
     let SerMgr = ServerProfileManager.instance
     var fastest:String?
-    var fastest_id : Int=0
+    var fastestId : Int=0
     
     //    func ping(_ i:Int=0){
     //        if i == 0{
@@ -152,16 +152,16 @@ class PingServers:NSObject{
                 // do the UI update HERE
                 if let min = result.min(by: {$0.1 < $1.1}){
                     self.fastest = String(describing: min.1)
-                    self.fastest_id  = min.0
+                    self.fastestId  = min.0
                     
                     // 将延迟最短的服务设置为当前代理
                     if active {
-                        self.SerMgr.setActiveProfiledId(self.SerMgr.profiles[self.fastest_id].uuid)
+                        self.SerMgr.setActiveProfiledId(self.SerMgr.profiles[self.fastestId].uuid)
                     }
                     
                     let notice = NSUserNotification()
                     notice.title = "Ping测试完成！最快\(min.1)ms"
-                    notice.subtitle = "最快的是\(self.SerMgr.profiles[self.fastest_id].serverHost) \(self.SerMgr.profiles[self.fastest_id].remark)"
+                    notice.subtitle = "最快的是\(self.SerMgr.profiles[self.fastestId].serverHost) \(self.SerMgr.profiles[self.fastestId].remark)"
                     
                     NSUserNotificationCenter.default.deliver(notice)
                     
@@ -173,7 +173,6 @@ class PingServers:NSObject{
                         (NSApplication.shared.delegate as! AppDelegate).updateRunningModeMenu()
                     }
                 }
-                
             }
         }
         
