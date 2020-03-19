@@ -232,6 +232,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
     func applicationWillTerminate(_ aNotification: Notification) {
         // Insert code here to tear down your application
         self.stopSSR()
+        
+        if launchAtLoginController.launchAtLogin == false {
+            RemoveSSLocal()
+            RemovePrivoxy()
+        }
     }
     
     private func stopSSR() {

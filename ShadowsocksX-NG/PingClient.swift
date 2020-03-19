@@ -30,8 +30,6 @@ class PingServers:NSObject{
     static let instance = PingServers()
     
     let SerMgr = ServerProfileManager.instance
-    var fastest:String?
-    var fastest_id : Int=0
     
     //    func ping(_ i:Int=0){
     //        if i == 0{
@@ -133,39 +131,37 @@ class PingServers:NSObject{
     
     
     func ping(_ i:Int=0, active:Bool=true){
-        
         neverSpeedTestBefore = false
-        
-        var result:[(Int,Double)] = []
         
         NotificationCenter.default.addObserver(forName: NSNotification.Name("PingTestFinish"), object: nil, queue: OperationQueue.main) { (noti) in
             DispatchQueue.main.async {
+                var fastestId : Int=0
+                var fastest:Double = Double.infinity
                 
                 for k in 0..<self.SerMgr.profiles.count {
                     if let late = self.SerMgr.profiles[k].latency{
                         if let latency = Double(late){
-                            result.append((k,latency))
+                            if latency < fastest {
+                                fastestId = k
+                                fastest = latency
+                            }
                         }
                     }
                 }
                 
-                // do the UI update HERE
-                if let min = result.min(by: {$0.1 < $1.1}){
-                    self.fastest = String(describing: min.1)
-                    self.fastest_id  = min.0
-                    
+                if fastest != Double.infinity {
                     // 将延迟最短的服务设置为当前代理
                     if active {
-                        self.SerMgr.setActiveProfiledId(self.SerMgr.profiles[self.fastest_id].uuid)
+                        self.SerMgr.setActiveProfiledId(self.SerMgr.profiles[fastestId].uuid)
                     }
                     
                     let notice = NSUserNotification()
-                    notice.title = "Ping测试完成！最快\(min.1)ms"
-                    notice.subtitle = "最快的是\(self.SerMgr.profiles[self.fastest_id].serverHost) \(self.SerMgr.profiles[self.fastest_id].remark)"
+                    notice.title = "Ping测试完成！最快\(fastest)ms"
+                    notice.subtitle = "最快的是\(self.SerMgr.profiles[fastestId].serverHost) \(self.SerMgr.profiles[fastestId].remark)"
                     
                     NSUserNotificationCenter.default.deliver(notice)
                     
-                    UserDefaults.standard.setValue("\(min.1)", forKey: "FastestNode")
+                    UserDefaults.standard.setValue("\(fastest)", forKey: "FastestNode")
                     UserDefaults.standard.synchronize()
                     
                     DispatchQueue.main.async {
@@ -173,20 +169,18 @@ class PingServers:NSObject{
                         (NSApplication.shared.delegate as! AppDelegate).updateRunningModeMenu()
                     }
                 }
-                
             }
         }
         
-        var testResult = 0
+        var count = 0
         var haspostNotification = false
-        for k in 0..<SerMgr.profiles.count {
-            let host = self.SerMgr.profiles[k].serverHost
-            pingSingleHost(host: host, completionHandler: { [weak self] in
-                guard let w = self else {return}
+
+        self.SerMgr.profiles.forEach{ (profile) in
+            pingSingleHost(host: profile.serverHost, completionHandler: { [weak self] in
                 if let latency = $0{
-                    testResult += 1
-                    w.SerMgr.profiles[k].latency = String(latency)
-                    if testResult == w.SerMgr.profiles.count-1 {
+                    self?.SerMgr.profiles[count].latency = String(latency)
+                    count += 1
+                    if count == self?.SerMgr.profiles.count {
                         haspostNotification = true
                         DispatchQueue.main.async {
                             NotificationCenter.default.post(name: NSNotification.Name("PingTestFinish"), object: nil)
@@ -194,6 +188,7 @@ class PingServers:NSObject{
                     }
                 }
             })
+            
         }
         
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+3) {

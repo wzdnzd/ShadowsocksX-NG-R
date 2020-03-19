@@ -12,7 +12,7 @@ class ServerProfileManager: NSObject {
     
     static let instance:ServerProfileManager = ServerProfileManager()
     
-    var profiles:[ServerProfile]
+    var profiles:[ServerProfile] = [ServerProfile]()
     var activeProfileId: String?
     
     fileprivate override init() {
@@ -82,6 +82,19 @@ class ServerProfileManager: NSObject {
             removeSSLocalConfFile()
         }
         defaults.synchronize()
+    }
+    
+    func reload() {
+        profiles.removeAll()
+
+        let defaults = UserDefaults.standard
+        if let _profiles = defaults.array(forKey: "ServerProfiles") {
+            for _profile in _profiles {
+                let profile = ServerProfile.fromDictionary(_profile as! [String : AnyObject])
+                profiles.append(profile)
+            }
+        }
+        activeProfileId = defaults.string(forKey: "ActiveServerProfileId")
     }
     
     func getActiveProfile() -> ServerProfile? {

@@ -27,6 +27,8 @@
 		0AAB28EF241CC36400B109D9 /* ProxyPreferencesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AAB28EE241CC36400B109D9 /* ProxyPreferencesController.swift */; };
 		0AAB29AA241CC49F00B109D9 /* ProxyPreferencesController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0AAB29AC241CC49F00B109D9 /* ProxyPreferencesController.xib */; };
 		31EC8002F6D683D17037DF16 /* Pods_ShadowsocksX_NGTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6618B10B340A3D7A925E0A9F /* Pods_ShadowsocksX_NGTests.framework */; };
+		8BE3F71C2423290B0092FDEA /* remove_privoxy.sh in Resources */ = {isa = PBXBuildFile; fileRef = 8BE3F719242328BA0092FDEA /* remove_privoxy.sh */; };
+		8BE3F71D2423290B0092FDEA /* remove_ss_local.sh in Resources */ = {isa = PBXBuildFile; fileRef = 8BE3F71B242328E50092FDEA /* remove_ss_local.sh */; };
 		9B07EFA71D048BBB0052D9DF /* ss-local in Resources */ = {isa = PBXBuildFile; fileRef = 9B07EFA61D048BBB0052D9DF /* ss-local */; };
 		9B07EFAC1D048E880052D9DF /* menu_icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9B07EFA81D048E880052D9DF /* menu_icon@2x.png */; };
 		9B07EFAD1D048E880052D9DF /* menu_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 9B07EFA91D048E880052D9DF /* menu_icon.png */; };
@@ -139,6 +141,8 @@
 		6D181C28E4E8EAEA91CF7854 /* Pods-ShadowsocksX-NGTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ShadowsocksX-NGTests.release.xcconfig"; path = "Target Support Files/Pods-ShadowsocksX-NGTests/Pods-ShadowsocksX-NGTests.release.xcconfig"; sourceTree = "<group>"; };
 		7E2417EA26470A73DF17FC78 /* Pods-ShadowsocksX-NG.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ShadowsocksX-NG.release.xcconfig"; path = "Target Support Files/Pods-ShadowsocksX-NG/Pods-ShadowsocksX-NG.release.xcconfig"; sourceTree = "<group>"; };
 		8428A07C59DC83DCFDB0D9D4 /* Pods-ShadowsocksX-NGTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ShadowsocksX-NGTests.debug.xcconfig"; path = "Target Support Files/Pods-ShadowsocksX-NGTests/Pods-ShadowsocksX-NGTests.debug.xcconfig"; sourceTree = "<group>"; };
+		8BE3F719242328BA0092FDEA /* remove_privoxy.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = remove_privoxy.sh; sourceTree = "<group>"; };
+		8BE3F71B242328E50092FDEA /* remove_ss_local.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = remove_ss_local.sh; sourceTree = "<group>"; };
 		8BF8B73B241F5BCA0020833C /* ShadowsocksX-NG.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "ShadowsocksX-NG.entitlements"; sourceTree = "<group>"; };
 		9B07EFA61D048BBB0052D9DF /* ss-local */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = "ss-local"; sourceTree = "<group>"; };
 		9B07EFA81D048E880052D9DF /* menu_icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "menu_icon@2x.png"; sourceTree = "<group>"; };
@@ -287,6 +291,8 @@
 				9BEEF0671D04CE9A00FC52B3 /* stop_ss_local.sh */,
 				9BEEF0681D04CFE500FC52B3 /* reload_conf_ss_local.sh */,
 				C6D429981DA76FBC002A5711 /* privoxy.config.example */,
+				8BE3F719242328BA0092FDEA /* remove_privoxy.sh */,
+				8BE3F71B242328E50092FDEA /* remove_ss_local.sh */,
 			);
 			name = "Support Files";
 			sourceTree = "<group>";
@@ -518,6 +524,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8BE3F71C2423290B0092FDEA /* remove_privoxy.sh in Resources */,
+				8BE3F71D2423290B0092FDEA /* remove_ss_local.sh in Resources */,
 				9BE8FBBF1D0B211600CAFD01 /* libcrypto.1.0.0.dylib in Resources */,
 				9B3FFF541D09E2D10019A709 /* proxy_conf_helper in Resources */,
 				C6E28E951DA79705004F8330 /* HTTPPreferencesWindowController.xib in Resources */,
@@ -915,7 +923,7 @@
 				CODE_SIGN_ENTITLEMENTS = "ShadowsocksX-NG/ShadowsocksX-NG.entitlements";
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = 5S22G6U9WJ;
 				ENABLE_HARDENED_RUNTIME = NO;
 				HEADER_SEARCH_PATHS = (
@@ -933,7 +941,7 @@
 					"$(PROJECT_DIR)/ShadowsocksX-NG",
 					"$(PROJECT_DIR)",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MARKETING_VERSION = 1.4.8;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.qiuyuzhou.ShadowsocksX-NG";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -954,7 +962,7 @@
 				CODE_SIGN_ENTITLEMENTS = "ShadowsocksX-NG/ShadowsocksX-NG.entitlements";
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = 5S22G6U9WJ;
 				ENABLE_HARDENED_RUNTIME = NO;
 				HEADER_SEARCH_PATHS = (
@@ -972,7 +980,7 @@
 					"$(PROJECT_DIR)/ShadowsocksX-NG",
 					"$(PROJECT_DIR)",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MARKETING_VERSION = 1.4.8;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.qiuyuzhou.ShadowsocksX-NG";
 				PRODUCT_NAME = "$(TARGET_NAME)";
