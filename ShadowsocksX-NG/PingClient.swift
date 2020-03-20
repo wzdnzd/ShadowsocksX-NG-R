@@ -172,15 +172,13 @@ class PingServers:NSObject{
             }
         }
         
-        var count = 0
         var haspostNotification = false
-
-        self.SerMgr.profiles.forEach{ (profile) in
-            pingSingleHost(host: profile.serverHost, completionHandler: { [weak self] in
+        for count in 0 ..< self.SerMgr.profiles.count{
+            pingSingleHost(host: self.SerMgr.profiles[count].serverHost, completionHandler: { [weak self] in
                 if let latency = $0{
-                    self?.SerMgr.profiles[count].latency = String(latency)
-                    count += 1
-                    if count == self?.SerMgr.profiles.count {
+                    let index = count
+                    self?.SerMgr.profiles[index].latency = String(latency)
+                    if index >= (self?.SerMgr.profiles.count ?? 0) {
                         haspostNotification = true
                         DispatchQueue.main.async {
                             NotificationCenter.default.post(name: NSNotification.Name("PingTestFinish"), object: nil)
@@ -188,7 +186,6 @@ class PingServers:NSObject{
                     }
                 }
             })
-            
         }
         
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+3) {

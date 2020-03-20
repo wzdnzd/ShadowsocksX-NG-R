@@ -25,8 +25,8 @@
 		08F162C01EBEE6F800C52869 /* backchn.acl in Resources */ = {isa = PBXBuildFile; fileRef = 08F162BF1EBEE6F800C52869 /* backchn.acl */; };
 		08F162C21EBEEC0F00C52869 /* gfwlist.acl in Resources */ = {isa = PBXBuildFile; fileRef = 08F162C11EBEEC0F00C52869 /* gfwlist.acl */; };
 		0AAB28EF241CC36400B109D9 /* ProxyPreferencesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AAB28EE241CC36400B109D9 /* ProxyPreferencesController.swift */; };
-		0AAB29AA241CC49F00B109D9 /* ProxyPreferencesController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0AAB29AC241CC49F00B109D9 /* ProxyPreferencesController.xib */; };
 		31EC8002F6D683D17037DF16 /* Pods_ShadowsocksX_NGTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6618B10B340A3D7A925E0A9F /* Pods_ShadowsocksX_NGTests.framework */; };
+		8B36E8552423E6EA00C05E53 /* ProxyPreferencesController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8B36E8532423E6E900C05E53 /* ProxyPreferencesController.xib */; };
 		8BE3F71C2423290B0092FDEA /* remove_privoxy.sh in Resources */ = {isa = PBXBuildFile; fileRef = 8BE3F719242328BA0092FDEA /* remove_privoxy.sh */; };
 		8BE3F71D2423290B0092FDEA /* remove_ss_local.sh in Resources */ = {isa = PBXBuildFile; fileRef = 8BE3F71B242328E50092FDEA /* remove_ss_local.sh */; };
 		9B07EFA71D048BBB0052D9DF /* ss-local in Resources */ = {isa = PBXBuildFile; fileRef = 9B07EFA61D048BBB0052D9DF /* ss-local */; };
@@ -79,8 +79,6 @@
 		C6E28E951DA79705004F8330 /* HTTPPreferencesWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = C6E28E971DA79705004F8330 /* HTTPPreferencesWindowController.xib */; };
 		C8E42A6C1D4F270A0074C7EA /* UserRulesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8E42A6A1D4F270A0074C7EA /* UserRulesController.swift */; };
 		C8E42A6E1D4F2CAF0074C7EA /* UserRulesController.xib in Resources */ = {isa = PBXBuildFile; fileRef = C8E42A701D4F2CAF0074C7EA /* UserRulesController.xib */; };
-		E83546612416034200D7776E /* ProxyPreferencesNewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E835465F2416034200D7776E /* ProxyPreferencesNewController.swift */; };
-		E835466924160D4000D7776E /* ProxyPreferencesNewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E835466B24160D4000D7776E /* ProxyPreferencesNewController.xib */; };
 		E8CD016C23726D14006CB1F6 /* ToastWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8CD016B23726D14006CB1F6 /* ToastWindowController.swift */; };
 		E8CD016E23726D6C006CB1F6 /* ToastWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E8CD016D23726D6C006CB1F6 /* ToastWindowController.xib */; };
 		E8F9108C2421BADF005E69E6 /* remove_ss_local.sh in Resources */ = {isa = PBXBuildFile; fileRef = E8F9108B2421BADF005E69E6 /* remove_ss_local.sh */; };
@@ -136,8 +134,6 @@
 		08F162BF1EBEE6F800C52869 /* backchn.acl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = backchn.acl; sourceTree = "<group>"; };
 		08F162C11EBEEC0F00C52869 /* gfwlist.acl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = gfwlist.acl; sourceTree = "<group>"; };
 		0AAB28EE241CC36400B109D9 /* ProxyPreferencesController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProxyPreferencesController.swift; sourceTree = "<group>"; };
-		0AAB29AB241CC49F00B109D9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/ProxyPreferencesController.xib; sourceTree = "<group>"; };
-		0AAB29AE241CC4AE00B109D9 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/ProxyPreferencesController.strings"; sourceTree = "<group>"; };
 		0AB75A6D229E9DD0009D0748 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/SubscribePreferenceWindowController.strings"; sourceTree = "<group>"; };
 		168D9B6E0133D852A5F3F791 /* libPods-proxy_conf_helper.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-proxy_conf_helper.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		483228B0E4F999EC8C56A355 /* Pods-proxy_conf_helper.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-proxy_conf_helper.release.xcconfig"; path = "Target Support Files/Pods-proxy_conf_helper/Pods-proxy_conf_helper.release.xcconfig"; sourceTree = "<group>"; };
@@ -145,6 +141,8 @@
 		6D181C28E4E8EAEA91CF7854 /* Pods-ShadowsocksX-NGTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ShadowsocksX-NGTests.release.xcconfig"; path = "Target Support Files/Pods-ShadowsocksX-NGTests/Pods-ShadowsocksX-NGTests.release.xcconfig"; sourceTree = "<group>"; };
 		7E2417EA26470A73DF17FC78 /* Pods-ShadowsocksX-NG.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ShadowsocksX-NG.release.xcconfig"; path = "Target Support Files/Pods-ShadowsocksX-NG/Pods-ShadowsocksX-NG.release.xcconfig"; sourceTree = "<group>"; };
 		8428A07C59DC83DCFDB0D9D4 /* Pods-ShadowsocksX-NGTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ShadowsocksX-NGTests.debug.xcconfig"; path = "Target Support Files/Pods-ShadowsocksX-NGTests/Pods-ShadowsocksX-NGTests.debug.xcconfig"; sourceTree = "<group>"; };
+		8B36E8542423E6E900C05E53 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/ProxyPreferencesController.xib; sourceTree = "<group>"; };
+		8B36E8562423E6F000C05E53 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/ProxyPreferencesController.strings"; sourceTree = "<group>"; };
 		8BE3F719242328BA0092FDEA /* remove_privoxy.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = remove_privoxy.sh; sourceTree = "<group>"; };
 		8BE3F71B242328E50092FDEA /* remove_ss_local.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = remove_ss_local.sh; sourceTree = "<group>"; };
 		8BF8B73B241F5BCA0020833C /* ShadowsocksX-NG.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "ShadowsocksX-NG.entitlements"; sourceTree = "<group>"; };
@@ -269,6 +267,15 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		8B36E8482423E21F00C05E53 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				E835465F2416034200D7776E /* ProxyPreferencesNewController.swift */,
+				E835466B24160D4000D7776E /* ProxyPreferencesNewController.xib */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
 		9B07EFB01D048E900052D9DF /* Support Files */ = {
 			isa = PBXGroup;
 			children = (
@@ -318,6 +325,7 @@
 				9B0BFFE61D0460A70040E62B /* Products */,
 				D3CE66CC039F651F28057DDB /* Frameworks */,
 				640376CBD1831930DADAAA9F /* Pods */,
+				8B36E8482423E21F00C05E53 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -382,7 +390,7 @@
 		9B3FFF0B1D05D8B80019A709 /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				0AAB29AC241CC49F00B109D9 /* ProxyPreferencesController.xib */,
+				8B36E8532423E6E900C05E53 /* ProxyPreferencesController.xib */,
 				0AAB28EE241CC36400B109D9 /* ProxyPreferencesController.swift */,
 				9B3FFF331D08CEF70019A709 /* SWBQRCodeWindowController.xib */,
 				9B3FFF301D08CEE40019A709 /* SWBQRCodeWindowController.h */,
@@ -544,11 +552,9 @@
 				086A31451F1AF797004C7285 /* SubscribePreferenceWindowController.xib in Resources */,
 				E8F9108E2421BC0B005E69E6 /* remove_privoxy.sh in Resources */,
 				9B2491B41D0ACC3A003BBECC /* PreferencesWindowController.xib in Resources */,
-				E835466924160D4000D7776E /* ProxyPreferencesNewController.xib in Resources */,
 				9B3FFF291D08A1DF0019A709 /* user-rule.txt in Resources */,
 				C6D429971DA75988002A5711 /* stop_privoxy.sh in Resources */,
 				08CF21461E2A730E008F235D /* LICENSE in Resources */,
-				0AAB29AA241CC49F00B109D9 /* ProxyPreferencesController.xib in Resources */,
 				C8E42A6E1D4F2CAF0074C7EA /* UserRulesController.xib in Resources */,
 				9BEEF06A1D04D4D500FC52B3 /* start_ss_local.sh in Resources */,
 				C6D429941DA75988002A5711 /* privoxy in Resources */,
@@ -576,6 +582,7 @@
 				9B07EFAC1D048E880052D9DF /* menu_icon@2x.png in Resources */,
 				E8CD016E23726D6C006CB1F6 /* ToastWindowController.xib in Resources */,
 				9B07EFA71D048BBB0052D9DF /* ss-local in Resources */,
+				8B36E8552423E6EA00C05E53 /* ProxyPreferencesController.xib in Resources */,
 				9B07EFAF1D048E880052D9DF /* menu_icon_disabled@2x.png in Resources */,
 				9B07EFAE1D048E880052D9DF /* menu_icon_disabled.png in Resources */,
 				088EC3991D5F5BA300E40791 /* whiteiplist.pac in Resources */,
@@ -687,7 +694,6 @@
 				9B3FFF4F1D09D9D50019A709 /* ProxyConfHelper.m in Sources */,
 				9BB706A71D1B982300551F0E /* SWBApplication.m in Sources */,
 				9B3FFF1E1D0732660019A709 /* Utils.m in Sources */,
-				E83546612416034200D7776E /* ProxyPreferencesNewController.swift in Sources */,
 				9B3FFF321D08CEE40019A709 /* SWBQRCodeWindowController.m in Sources */,
 				08BDBB481E2361BD00C4BBC2 /* VersionChecker.swift in Sources */,
 				083BF8371D82742200831C68 /* PingClient.swift in Sources */,
@@ -754,11 +760,11 @@
 			name = SubscribePreferenceWindowController.xib;
 			sourceTree = "<group>";
 		};
-		0AAB29AC241CC49F00B109D9 /* ProxyPreferencesController.xib */ = {
+		8B36E8532423E6E900C05E53 /* ProxyPreferencesController.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				0AAB29AB241CC49F00B109D9 /* Base */,
-				0AAB29AE241CC4AE00B109D9 /* zh-Hans */,
+				8B36E8542423E6E900C05E53 /* Base */,
+				8B36E8562423E6F000C05E53 /* zh-Hans */,
 			);
 			name = ProxyPreferencesController.xib;
 			sourceTree = "<group>";
@@ -987,8 +993,6 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 9;
-				DEVELOPMENT_TEAM = 5S22G6U9WJ;
-				ENABLE_HARDENED_RUNTIME = NO;
 				DEVELOPMENT_TEAM = 4J772T4V7C;
 				ENABLE_HARDENED_RUNTIME = YES;
 				HEADER_SEARCH_PATHS = (
