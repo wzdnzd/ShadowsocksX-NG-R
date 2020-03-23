@@ -8,13 +8,11 @@
 - 爱国富强的前提是自己要有独立思考问题的能力，而不是秀智力
 
 - 下载地址：[releases](https://github.com/wzdnzd/ShadowsocksX-NG-R/releases)
+  
+> 推荐使用由[@paradiseduo](https://github.com/paradiseduo/ShadowsocksX-NG-R8)维护的版本，作者更新挺频繁！本[repo](https://github.com/wzdnzd/ShadowsocksX-NG-R)纯属只是为了个人特殊需求
 
 
 # ShadowsocksX-NG-R
-
-Current version is 1.5.1
-
-Continuesly release under 1.5.1
 
 [![Build Status](https://travis-ci.org/shadowsocksr/ShadowsocksX-NG.svg?branches=develop)](https://travis-ci.org/shadowsocksr/ShadowsocksX-NG)
 

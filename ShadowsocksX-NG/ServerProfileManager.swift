@@ -120,15 +120,7 @@ class ServerProfileManager: NSObject {
     
     func isDuplicated(profile: ServerProfile) -> (Bool, Int){
         for (index, value) in profiles.enumerated() {
-            let ret = value.serverHost == profile.serverHost
-                && value.password == profile.password
-                && value.serverPort == profile.serverPort
-                && value.ssrProtocol == profile.ssrProtocol
-                && value.ssrObfs == profile.ssrObfs
-                && value.ssrObfsParam == profile.ssrObfsParam
-                && value.ssrProtocolParam == profile.ssrProtocolParam
-                && value.remark == profile.remark
-                // && value.ssrGroup == profile.ssrGroup
+            let ret = value.isSame(profile: profile)
             if ret {
                 return (ret, index)
             }
@@ -182,7 +174,7 @@ class ServerProfileManager: NSObject {
                         self.profiles.append(profile)
                         self.save()
                     }
-                    NotificationCenter.default.post(name: Notification.Name(rawValue: NOTIFY_SERVER_PROFILES_CHANGED), object: nil)
+                    NotificationCenter.default.post(name: NOTIFY_SERVER_PROFILES_CHANGED, object: nil)
                     let configsCount = (jsonArr1.object(forKey: "configs") as! [[String: AnyObject]]).count
                     let notification = NSUserNotification()
                     notification.title = "Import Server Profile succeed!".localized

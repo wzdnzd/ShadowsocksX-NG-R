@@ -20,59 +20,14 @@ fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
     }
 }
 
-
 public typealias SimplePingClientCallback = (String?)->()
 
-
-
+var neverSpeedTestBefore:Bool = true
 
 class PingServers:NSObject{
     static let instance = PingServers()
     
     let SerMgr = ServerProfileManager.instance
-    
-    //    func ping(_ i:Int=0){
-    //        if i == 0{
-    //            fastest_id = 0
-    //            fastest = nil
-    //        }
-    //
-    //        if i >= SerMgr.profiles.count{
-    //            DispatchQueue.main.async {
-    //                // do the UI update HERE
-    //                let notice = NSUserNotification()
-    //                notice.title = "Ping测试完成！"
-    //                notice.subtitle = "最快的是\(self.SerMgr.profiles[self.fastest_id].remark) \(self.SerMgr.profiles[self.fastest_id].serverHost) \(self.SerMgr.profiles[self.fastest_id].latency!)ms"
-    //                NSUserNotificationCenter.default.deliver(notice)
-    //            }
-    //            return
-    //        }
-    //        let host = self.SerMgr.profiles[i].serverHost
-    //        SimplePingClient.pingHostname(host) { latency in
-    //            DispatchQueue.global().async {
-    //            print("[Ping Result]-\(host) latency is \(latency ?? "fail")")
-    //            self.SerMgr.profiles[i].latency = latency ?? "fail"
-    //
-    //            if latency != nil {
-    //                if self.fastest == nil{
-    //                    self.fastest = latency
-    //                    self.fastest_id = i
-    //                }else{
-    //                    if Int(latency!) < Int(self.fastest!) {
-    //                        self.fastest = latency
-    //                        self.fastest_id = i
-    //                    }
-    //                }
-    //                DispatchQueue.main.async {
-    //                    // do the UI update HERE
-    //                    (NSApplication.shared().delegate as! AppDelegate).updateServersMenu()
-    //                    (NSApplication.shared().delegate as! AppDelegate).updateRunningModeMenu()
-    //                }
-    //            }
-    //            }
-    //            self.ping(i+1)
-    //        }
-    //    }
     
     func runCommand(cmd : String, args : String...) -> (output: [String], error: [String], exitCode: Int32) {
         
@@ -120,123 +75,69 @@ class PingServers:NSObject{
         return latency
     }
     
-    func pingSingleHost(host:String,completionHandler:@escaping (Double?) -> Void){
-        DispatchQueue.global(qos: .userInteractive).async {
-            if let outputString = self.runCommand(cmd: "/sbin/ping", args: "-c","5","-t","2",host).output.last{
-                completionHandler(self.getlatencyFromString(result: outputString))
-            }
+    // TODO
+    func ping(){
+        if SerMgr.profiles.count <= 0 {
+            return
         }
-    }
-    
-    
-    
-    func ping(_ i:Int=0, active:Bool=true){
+        
         neverSpeedTestBefore = false
         
-        NotificationCenter.default.addObserver(forName: NSNotification.Name("PingTestFinish"), object: nil, queue: OperationQueue.main) { (noti) in
+        let group = DispatchGroup()
+        let queue = DispatchQueue.global(qos: DispatchQoS.QoSClass.userInteractive)
+        
+        let profiles = self.SerMgr.profiles
+        for i in 0..<profiles.count {
+            group.enter()
+            queue.async {
+                if let outputString = self.runCommand(cmd: "/sbin/ping", args: "-c","5","-t","2", profiles[i].serverHost).output.last {
+                    if let latency = self.getlatencyFromString(result: outputString) {
+                        // 不知为何，节点数会变化，故加个条件以避免数组越界问题
+                        if (i < self.SerMgr.profiles.count && profiles[i].isSame(profile: self.SerMgr.profiles[i])){
+                            self.SerMgr.profiles[i].latency = String(latency)
+                        }
+                    }
+                }
+                group.leave()
+            }
+        }
+        group.notify(queue: DispatchQueue.main) {
+            self.sortSpeed()
+        }
+    }
+    
+    func sortSpeed() {
+        var fastID = 0
+        var fastTime = Double.infinity
+        
+        for k in 0..<SerMgr.profiles.count {
+            if let late = SerMgr.profiles[k].latency{
+                if let latency = Double(late), latency < fastTime {
+                    fastTime = latency
+                    fastID = k
+                }
+            }
+        }
+        
+        if fastTime != Double.infinity {
+            let notice = NSUserNotification()
+            if fastID < self.SerMgr.profiles.count {
+                self.SerMgr.setActiveProfiledId(self.SerMgr.profiles[fastID].uuid)
+                UserDefaults.standard.setValue("\(SerMgr.profiles[fastID].latency!)", forKey: "FastestNode")
+                UserDefaults.standard.synchronize()
+                
+                notice.title = "Ping测试完成！最快\(SerMgr.profiles[fastID].latency!)ms"
+                notice.subtitle = "最快的是\(SerMgr.profiles[fastID].serverHost) \(SerMgr.profiles[fastID].remark)"
+            } else {
+                notice.title = "Ping测试完成！"
+            }
+            
+            NSUserNotificationCenter.default.deliver(notice)
+            
             DispatchQueue.main.async {
-                var fastestId : Int=0
-                var fastest:Double = Double.infinity
-                
-                for k in 0..<self.SerMgr.profiles.count {
-                    if let late = self.SerMgr.profiles[k].latency{
-                        if let latency = Double(late){
-                            if latency < fastest {
-                                fastestId = k
-                                fastest = latency
-                            }
-                        }
-                    }
-                }
-                
-                if fastest != Double.infinity {
-                    // 将延迟最短的服务设置为当前代理
-                    if active {
-                        self.SerMgr.setActiveProfiledId(self.SerMgr.profiles[fastestId].uuid)
-                    }
-                    
-                    let notice = NSUserNotification()
-                    notice.title = "Ping测试完成！最快\(fastest)ms"
-                    notice.subtitle = "最快的是\(self.SerMgr.profiles[fastestId].serverHost) \(self.SerMgr.profiles[fastestId].remark)"
-                    
-                    NSUserNotificationCenter.default.deliver(notice)
-                    
-                    UserDefaults.standard.setValue("\(fastest)", forKey: "FastestNode")
-                    UserDefaults.standard.synchronize()
-                    
-                    DispatchQueue.main.async {
-                        (NSApplication.shared.delegate as! AppDelegate).updateServersMenu()
-                        (NSApplication.shared.delegate as! AppDelegate).updateRunningModeMenu()
-                    }
-                }
-            }
-        }
-        
-        var haspostNotification = false
-        for count in 0 ..< self.SerMgr.profiles.count{
-            pingSingleHost(host: self.SerMgr.profiles[count].serverHost, completionHandler: { [weak self] in
-                if let latency = $0{
-                    let index = count
-                    self?.SerMgr.profiles[index].latency = String(latency)
-                    if index >= (self?.SerMgr.profiles.count ?? 0) {
-                        haspostNotification = true
-                        DispatchQueue.main.async {
-                            NotificationCenter.default.post(name: NSNotification.Name("PingTestFinish"), object: nil)
-                        }
-                    }
-                }
-            })
-        }
-        
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+3) {
-            if !haspostNotification {
-                NotificationCenter.default.post(name: NSNotification.Name("PingTestFinish"), object: nil)
+                (NSApplication.shared.delegate as! AppDelegate).updateServersMenu()
+                (NSApplication.shared.delegate as! AppDelegate).updateRunningModeMenu()
             }
         }
     }
 }
-
-
-typealias Task = (_ cancel : Bool) -> Void
-
-@discardableResult func delay(_ time: TimeInterval, task: @escaping ()->()) ->  Task? {
-    
-    func dispatch_later(block: @escaping ()->()) {
-        let t = DispatchTime.now() + time
-        DispatchQueue.main.asyncAfter(deadline: t, execute: block)
-    }
-    
-    
-    
-    var closure: (()->Void)? = task
-    var result: Task?
-    
-    let delayedClosure: Task = {
-        cancel in
-        if let internalClosure = closure {
-            if (cancel == false) {
-                DispatchQueue.main.async(execute: internalClosure)
-            }
-        }
-        closure = nil
-        result = nil
-    }
-    
-    result = delayedClosure
-    
-    dispatch_later {
-        if let delayedClosure = result {
-            delayedClosure(false)
-        }
-    }
-    
-    return result;
-    
-}
-
-
-func cancel(_ task: Task?) {
-    task?(true)
-}
-
-var neverSpeedTestBefore:Bool = true
