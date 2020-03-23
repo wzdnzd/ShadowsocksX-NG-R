@@ -956,7 +956,7 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = XRS36KG5TA;
+				DEVELOPMENT_TEAM = 5S22G6U9WJ;
 				ENABLE_HARDENED_RUNTIME = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/libcork/include/",
@@ -995,7 +995,7 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = XRS36KG5TA;
+				DEVELOPMENT_TEAM = 5S22G6U9WJ;
 				ENABLE_HARDENED_RUNTIME = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/libcork/include/",
@@ -1028,6 +1028,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 5S22G6U9WJ;
 				INFOPLIST_FILE = "ShadowsocksX-NGTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1048,6 +1049,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 5S22G6U9WJ;
 				INFOPLIST_FILE = "ShadowsocksX-NGTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

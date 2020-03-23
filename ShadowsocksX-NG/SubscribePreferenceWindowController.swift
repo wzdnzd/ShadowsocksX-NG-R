@@ -141,7 +141,7 @@ class SubscribePreferenceWindowController: NSWindowController
             FilterTextField.isEnabled = true
             MaxCountTextField.isEnabled = true
             ActiveButton.isEnabled = true
-            AutoUpdateButton.isEnabled = true
+            AutoUpdateButton.isEnabled = ActiveButton.state == .on
         }
     }
     

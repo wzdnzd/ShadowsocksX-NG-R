@@ -86,16 +86,13 @@ class PingServers:NSObject{
         let group = DispatchGroup()
         let queue = DispatchQueue.global(qos: DispatchQoS.QoSClass.userInteractive)
         
-        let profiles = self.SerMgr.profiles
-        for i in 0..<profiles.count {
+        for i in 0..<self.SerMgr.profiles.count {
             group.enter()
             queue.async {
-                if let outputString = self.runCommand(cmd: "/sbin/ping", args: "-c","5","-t","2", profiles[i].serverHost).output.last {
+                if let outputString = self.runCommand(cmd: "/sbin/ping", args: "-c","5","-t","2", self.SerMgr.profiles[i].serverHost).output.last {
                     if let latency = self.getlatencyFromString(result: outputString) {
-                        // 不知为何，节点数会变化，故加个条件以避免数组越界问题
-                        if (i < self.SerMgr.profiles.count && profiles[i].isSame(profile: self.SerMgr.profiles[i])){
-                            self.SerMgr.profiles[i].latency = String(latency)
-                        }
+                        self.SerMgr.profiles[i].latency = String(latency)
+                        
                     }
                 }
                 group.leave()
@@ -120,18 +117,14 @@ class PingServers:NSObject{
         }
         
         if fastTime != Double.infinity {
-            let notice = NSUserNotification()
-            if fastID < self.SerMgr.profiles.count {
-                self.SerMgr.setActiveProfiledId(self.SerMgr.profiles[fastID].uuid)
-                UserDefaults.standard.setValue("\(SerMgr.profiles[fastID].latency!)", forKey: "FastestNode")
-                UserDefaults.standard.synchronize()
-                
-                notice.title = "Ping测试完成！最快\(SerMgr.profiles[fastID].latency!)ms"
-                notice.subtitle = "最快的是\(SerMgr.profiles[fastID].serverHost) \(SerMgr.profiles[fastID].remark)"
-            } else {
-                notice.title = "Ping测试完成！"
-            }
+            self.SerMgr.setActiveProfiledId(self.SerMgr.profiles[fastID].uuid)
             
+            let notice = NSUserNotification()
+            notice.title = "Ping测试完成！最快\(SerMgr.profiles[fastID].latency!)ms"
+            notice.subtitle = "最快的是\(SerMgr.profiles[fastID].serverHost) \(SerMgr.profiles[fastID].remark)"
+            
+            UserDefaults.standard.setValue("\(SerMgr.profiles[fastID].latency!)", forKey: "FastestNode")
+            UserDefaults.standard.synchronize()
             NSUserNotificationCenter.default.deliver(notice)
             
             DispatchQueue.main.async {

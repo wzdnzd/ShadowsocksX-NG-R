@@ -64,7 +64,7 @@ class SubscribeManager:NSObject{
         let dispatch = DispatchGroup()
         let queue = DispatchQueue.global(qos: DispatchQoS.QoSClass.userInteractive)
         subscribes.forEach { s in
-            if (!auto || s.getAutoUpdateEnable()){
+            if (s.isActive && (!auto || s.getAutoUpdateEnable())){
                 dispatch.enter()
                 queue.async {
                     s.updateServerFromFeed()
