@@ -86,7 +86,7 @@ NSString* decode64(NSString* str){
     }
     NSData* decodeData = [[NSData alloc] initWithBase64EncodedString:str options:0];
     NSString* decodeStr = [[NSString alloc] initWithData:decodeData encoding:NSUTF8StringEncoding];
-    return decodeStr;
+    return decodeStr != nil ? decodeStr : @"";
 }
 
 NSString* encode64(NSString* str){
