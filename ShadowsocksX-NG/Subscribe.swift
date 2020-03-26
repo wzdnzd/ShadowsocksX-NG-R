@@ -265,10 +265,6 @@ import Alamofire
         })
     }
     func feedValidator() -> Bool{
-        // is the right format
-        // should be http or https reg
-        // but we should not support http only feed
-        // TODO refine the regular expression
         let feedRegExp = "http[s]?://[A-Za-z0-9-_/.=?]*"
         return subscribeFeed.range(of:feedRegExp, options: .regularExpression) != nil
     }

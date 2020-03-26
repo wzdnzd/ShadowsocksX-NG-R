@@ -109,12 +109,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
         
         setUpMenu(defaults.bool(forKey: "enable_showSpeed"))
         
-        //        statusItem = NSStatusBar.system.statusItem(withLength: 20)
-        //        let image = NSImage(named: "menu_icon")
-        //        image?.isTemplate = true
-        //        statusItem?.image = image
-        //        statusItem?.menu = statusMenu
-        
         let notifyCenter = NotificationCenter.default
         notifyCenter.addObserver(forName: NOTIFY_ADV_PROXY_CONF_CHANGED, object: nil, queue: nil
             , using: {

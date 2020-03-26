@@ -133,7 +133,7 @@ class SubscribePreferenceWindowController: NSWindowController
             MaxCountTextField.isEnabled = false
             ActiveButton.isEnabled = false
             AutoUpdateButton.isEnabled = false
-        }else{
+        } else {
             DeleteSubscribeBtn.isEnabled = true
             FeedTextField.isEnabled = true
             TokenTextField.isEnabled = true
@@ -191,13 +191,6 @@ class SubscribePreferenceWindowController: NSWindowController
         
         let title = getDataAtRow(row)
         
-        //        if convertFromNSUserInterfaceItemIdentifier(tableColumn?.identifier) == "main" {
-        //            if title != "" {return title}
-        //            else {return "S"}
-        //        } else if convertFromNSUserInterfaceItemIdentifier(tableColumn?.identifier) == "status" {
-        //            return NSImage(named: "menu_icon")
-        //        }
-        
         if tableColumn?.identifier == NSUserInterfaceItemIdentifier("main") {
             if title != "" {return title}
             else {return "S"}
@@ -230,11 +223,6 @@ class SubscribePreferenceWindowController: NSWindowController
         , row: Int, dropOperation: NSTableView.DropOperation) -> Bool {
         if let mgr = sbMgr {
             var oldIndexes = [Int]()
-            //            info.enumerateDraggingItems(options: [], for: tableView, classes: [NSPasteboardItem.self], searchOptions: [:]) {,<#arg#>,<#arg#> ,<#arg#>,<#arg#> ,<#arg#>,<#arg#> ,<#arg#>,<#arg#> ,<#arg#>,<#arg#> ,<#arg#>,<#arg#> ,<#arg#>,<#arg#>
-            //                if let str = ($0.item as! NSPasteboardItem).string(forType: convertToNSPasteboardPasteboardType(self.tableViewDragType)), let index = Int(str) {
-            //                    oldIndexes.append(index)
-            //                }
-            //            }
             
             info.enumerateDraggingItems(options: [], for: tableView, classes: [NSPasteboardItem.self], searchOptions: [:], using: {
                 (draggingItem: NSDraggingItem, idx: Int, stop: UnsafeMutablePointer<ObjCBool>) in
@@ -283,11 +271,6 @@ class SubscribePreferenceWindowController: NSWindowController
             editingSubscribe = nil
             return true
         }
-        //        if editingSubscribe != nil {
-        //            if !editingSubscribe.isValid() {
-        //                return false
-        //            }
-        //        }
         
         return true
     }
@@ -295,11 +278,7 @@ class SubscribePreferenceWindowController: NSWindowController
     func tableViewSelectionDidChange(_ notification: Notification) {
         if SubscribeTableView.selectedRow >= 0 {
             bindSubscribe(SubscribeTableView.selectedRow)
-            if (SubscribeTableView.selectedRowIndexes.count > 1){
-                //                duplicateProfileButton.isEnabled = false
-            } else {
-                //                duplicateProfileButton.isEnabled = true
-            }
+            
             if !editingSubscribe.isActive{
                 AutoUpdateButton.isEnabled = false
             }
