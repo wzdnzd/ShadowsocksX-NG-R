@@ -177,7 +177,7 @@ import Alamofire
             self.cache = resString
         })
     }
-    func updateServerFromFeed(delete: Bool=false){
+    func updateServerFromFeed(delete: Bool=false, inform: Bool=true){
         func updateServerHandler(resString: String, delete: Bool=false) {
             let decodeRes = decode64(resString)!
             let ssrregexp = "ssr://([A-Za-z0-9_-]+)"
@@ -221,9 +221,7 @@ import Alamofire
             var cleanCount = 0
             if groupSame && clearOldGroup {
                 // 原有的 group 中的 profile 全部清除
-                // let activeProfile = self.profileMgr.getActiveProfile()
                 cleanCount = self.profileMgr.profiles.filter { $0.ssrGroup == group }.count
-                // self.profileMgr.profiles = self.profileMgr.profiles.filter { $0.ssrGroup != group || $0 == activeProfile}
                 self.profileMgr.profiles = self.profileMgr.profiles.filter { $0.ssrGroup != group}
             }
             
@@ -248,7 +246,9 @@ import Alamofire
                     successCount += 1
                 }
                 
-                pushNotification(title: "成功更新订阅", subtitle: "总数:\(maxN) 成功:\(successCount) 清除:\(cleanCount) 重复:\(dupCount) 已存在:\(existCount)", info: "更新来自\(subscribeFeed)的订阅")
+                if inform {
+                    pushNotification(title: "成功更新订阅", subtitle: "总数:\(maxN) 成功:\(successCount) 清除:\(cleanCount) 重复:\(dupCount) 已存在:\(existCount)", info: "更新来自\(subscribeFeed)的订阅")
+                }
             }
             
             self.profileMgr.save()

@@ -1,11 +1,23 @@
-/* Class = "NSButtonCell"; title = "OK"; ObjectID = "CfK-8Y-YNP"; */
-"CfK-8Y-YNP.title" = "OK";
+/* Class = "NSTextFieldCell"; placeholderString = "Optional"; ObjectID = "3kt-n3-uTF"; */
+"3kt-n3-uTF.placeholderString" = "Optional";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Optional"; ObjectID = "ASh-mc-Uyt"; */
+"ASh-mc-Uyt.placeholderString" = "Optional";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Optional"; ObjectID = "rc1-l2-7Mh"; */
+"rc1-l2-7Mh.placeholderString" = "Optional";
 
 /* Class = "NSWindow"; title = "Subscribe Preference"; ObjectID = "F0z-JX-Cv5"; */
 "F0z-JX-Cv5.title" = "订阅设置";
 
 /* Class = "NSTextFieldCell"; title = "Token"; ObjectID = "IrJ-D8-tlX"; */
 "IrJ-D8-tlX.title" = "口令";
+
+/* Class = "NSButtonCell"; title = "OK"; ObjectID = "CfK-8Y-YNP"; */
+"CfK-8Y-YNP.title" = "确定";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "Tq0-dW-y2J"; */
+"Tq0-dW-y2J.title" = "取消";
 
 /* Class = "NSTextFieldCell"; title = "Group"; ObjectID = "f2p-qb-uuE"; */
 "f2p-qb-uuE.title" = "组名";

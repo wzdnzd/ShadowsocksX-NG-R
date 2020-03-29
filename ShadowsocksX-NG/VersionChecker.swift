@@ -21,13 +21,11 @@ class VersionChecker: NSObject {
         let url = URL(string:fromURL)!
         do {
             let st = try String(contentsOf: url, encoding: String.Encoding.utf8)
-            print(st)
             let data = st.data(using: String.Encoding.utf8)
             manager.createFile( atPath: toPath + withName , contents: data, attributes: nil)
             return true
             
         } catch {
-            print(error)
             return false
         }
     }
@@ -55,7 +53,6 @@ class VersionChecker: NSObject {
         repeat {
             if let index = strTmp.range(of: ".")?.lowerBound, let num = Int(String(strTmp[..<index])) {
                 ret.append(num)
-                print(String(strTmp[..<index]))
             }
             if let index = strTmp.range(of: ".")?.upperBound {
                 strTmp = String(strTmp[index...])

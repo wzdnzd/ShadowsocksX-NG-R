@@ -13,6 +13,7 @@ class SubscribePreferenceWindowController: NSWindowController
     
     @IBOutlet weak var FeedLabel: NSTextField!
     @IBOutlet weak var OKButton: NSButton!
+    @IBOutlet weak var CancelButton: NSButton!
     
     @IBOutlet weak var ActiveButton: NSButton!
     @IBOutlet weak var AutoUpdateButton: NSButton!
@@ -59,6 +60,11 @@ class SubscribePreferenceWindowController: NSWindowController
             }
         }
         sbMgr.save()
+        window?.performClose(self)
+    }
+    
+    @IBAction func cancel(_ sender: NSButton) {
+        sbMgr.reload()
         window?.performClose(self)
     }
     

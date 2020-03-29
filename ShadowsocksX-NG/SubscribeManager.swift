@@ -42,6 +42,15 @@ class SubscribeManager:NSObject{
         subscribes.remove(at: atIndex)
         return true
     }
+    func reload() {
+        subscribes.removeAll()
+        
+        if let subscribesDefault = defaults.array(forKey: "Subscribes") {
+            for value in subscribesDefault{
+                subscribes.append(Subscribe.fromDictionary(value as! [String : AnyObject]))
+            }
+        }
+    }
     func save() {
         defaults.set(subscribesToDefaults(data: subscribes), forKey: "Subscribes")
         defaults.synchronize()
@@ -60,14 +69,14 @@ class SubscribeManager:NSObject{
         }
         return ret
     }
-    func updateAllServerFromSubscribe(auto: Bool){
+    func updateAllServerFromSubscribe(auto: Bool, inform: Bool=true){
         let dispatch = DispatchGroup()
         let queue = DispatchQueue.global(qos: DispatchQoS.QoSClass.userInteractive)
         subscribes.forEach { s in
             if (s.isActive && (!auto || s.getAutoUpdateEnable())){
                 dispatch.enter()
                 queue.async {
-                    s.updateServerFromFeed()
+                    s.updateServerFromFeed(inform: inform)
                     dispatch.leave()
                 }
             }
