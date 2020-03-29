@@ -13,58 +13,26 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>ShadowsocksX-NG-R8</string>
+	<string>$(PRODUCT_NAME)</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.5.0</string>
+	<string>1.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>CFBundleURLIconFile</key>
-			<string>menu_icon@2x</string>
-			<key>CFBundleURLName</key>
-			<string>shadowsocks</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>ss</string>
-			</array>
-		</dict>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>CFBundleURLIconFile</key>
-			<string>menu_icon@2x</string>
-			<key>CFBundleURLName</key>
-			<string>shadowsocks</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>ssr</string>
-			</array>
-		</dict>
-	</array>
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.utilities</string>
+	<key>LSBackgroundOnly</key>
+	<true/>
 	<key>LSMinimumSystemVersion</key>
 	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
-	<key>LSUIElement</key>
-	<true/>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
-	</dict>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2020年 qiuyuzhou. modify by wzdnzd. All rights reserved. License GPLv3.</string>
+	<string>Copyright © 2020年 qiuyuzhou and all Developer. modify by ParadiseDuo. All rights reserved. License GPLv3.</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
-	<string>SWBApplication</string>
+	<string>NSApplication</string>
 </dict>
 </plist>

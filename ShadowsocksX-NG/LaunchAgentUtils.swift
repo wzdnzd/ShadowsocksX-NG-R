@@ -349,14 +349,10 @@ func SyncPrivoxy() {
         
         let on = UserDefaults.standard.bool(forKey: "LocalHTTPOn")
         if on {
-            //            StartPrivoxy()
             ReloadConfPrivoxy()
-        }
-        else {
+        } else {
             removePrivoxyConfFile()
             StopPrivoxy()
         }
     }
 }
-
-// MARK: dependency

@@ -156,7 +156,6 @@ import Cocoa
         
         func validateDomainName(_ value: String) -> Bool {
             let validHostnameRegex = "^(([a-zA-Z0-9_]|[a-zA-Z0-9_][a-zA-Z0-9\\-_]*[a-zA-Z0-9_])\\.)*([A-Za-z0-9_]|[A-Za-z0-9_][A-Za-z0-9\\-_]*[A-Za-z0-9_])$"
-            
             if (value.range(of: validHostnameRegex, options: .regularExpression) != nil) {
                 return true
             } else {

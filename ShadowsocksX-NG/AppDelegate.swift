@@ -25,7 +25,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
     var launchAtLoginController: LaunchAtLoginController = LaunchAtLoginController()
     
     // MARK: Outlets
-    @IBOutlet weak var window: NSWindow!
     @IBOutlet weak var statusMenu: NSMenu!
     
     @IBOutlet weak var runningStatusMenuItem: NSMenuItem!
@@ -40,7 +39,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
     @IBOutlet weak var ACLBackChinaMenuItem: NSMenuItem!
     
     @IBOutlet weak var serversMenuItem: NSMenuItem!
-    @IBOutlet var pingserverMenuItem: NSMenuItem!
+    @IBOutlet var connectionDelayTestMenuItem: NSMenuItem!
     @IBOutlet var showQRCodeMenuItem: NSMenuItem!
     @IBOutlet var scanQRCodeMenuItem: NSMenuItem!
     @IBOutlet var showBunchJsonExampleFileItem: NSMenuItem!
@@ -57,9 +56,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
     @IBOutlet weak var checkUpdateAtLaunchMenuItem: NSMenuItem!
     @IBOutlet var updateSubscribeAtLaunchMenuItem: NSMenuItem!
     @IBOutlet var manualUpdateSubscribeMenuItem: NSMenuItem!
+    @IBOutlet weak var timingDelayTestMenuItem: NSMenuItem!
     @IBOutlet var editSubscribeMenuItem: NSMenuItem!
     
     @IBOutlet weak var copyCommandLine: NSMenuItem!
+    @IBOutlet weak var icmpMenuItem: NSMenuItem!
+    @IBOutlet weak var tcpMenuItem: NSMenuItem!
     
     
     // MARK: Variables
@@ -70,6 +72,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
     
     var speedTimer:Timer?
     let repeatTimeinterval: TimeInterval = 2.0
+    
+    var autoPingTimer:Timer?
+    let autoPingRepeatTimeinterval: TimeInterval = 600.0
     
     // MARK: Application function
     func applicationDidFinishLaunching(_ aNotification: Notification) {
@@ -104,11 +109,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
             "AutoCheckUpdate": false,
             "ACLFileName": "chn.acl",
             "Subscribes": [],
-            "AutoUpdateSubscribe":false,
+            "AutoUpdateSubscribe": false,
+            "AutoDelayTest": false
         ])
         
         setUpMenu(defaults.bool(forKey: "enable_showSpeed"))
-        
         let notifyCenter = NotificationCenter.default
         notifyCenter.addObserver(forName: NOTIFY_ADV_PROXY_CONF_CHANGED, object: nil, queue: nil
             , using: {
@@ -165,12 +170,18 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
         
         ProxyConfHelper.install()
         applyConfig()
-        //        SyncSSLocal()
-        
         if defaults.bool(forKey: "ConnectAtLaunch") && ServerProfileManager.instance.getActiveProfileId() != "" {
             defaults.set(false, forKey: "ShadowsocksOn")
             defaults.synchronize()
             toggleRunning(toggleRunningMenuItem)
+        }
+        
+        if defaults.bool(forKey: "AutoDelayTest") {
+            autoPingTimer = Timer.scheduledTimer(withTimeInterval: autoPingRepeatTimeinterval, repeats: true) { timer in
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    ConnectTestigManager.start(inform: false)
+                }
+            }
         }
         
         DispatchQueue.global().async {
@@ -180,9 +191,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
             }
             if defaults.bool(forKey: "AutoUpdateSubscribe") {
                 SubscribeManager.instance.updateAllServerFromSubscribe(auto: true)
-            }
-            DispatchQueue.main.async {
-                
             }
         }
     }
@@ -278,8 +286,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
     }
     
     @IBAction func toggleLaunghAtLogin(_ sender: NSMenuItem) {
-        launchAtLoginController.launchAtLogin = !launchAtLoginController.launchAtLogin;
-        updateLaunchAtLoginMenu()
+        let bFlag = !launchAtLoginController.launchAtLogin;
+        launchAtLoginController.launchAtLogin = bFlag;
+        lanchAtLoginMenuItem.state = NSControl.StateValue(rawValue: bFlag ? 1 : 0)
     }
     
     @IBAction func toggleConnectAtLaunch(_ sender: NSMenuItem) {
@@ -386,7 +395,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
     
     @IBAction func importBunchJsonFile(_ sender: NSMenuItem) {
         ServerProfileManager.instance.importConfigFile()
-        //updateServersMenu()//not working
     }
     
     @IBAction func exportAllServerProfile(_ sender: NSMenuItem) {
@@ -403,7 +411,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
         defaults.synchronize()
         updateSubscribeAtLaunchMenuItem.state = NSControl.StateValue(rawValue: defaults.bool(forKey: "AutoUpdateSubscribe") ? 1 : 0)
     }
-    
     
     // MARK: Proxy submenu function
     
@@ -524,8 +531,43 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
         updateRunningModeMenu()
     }
     
-    @IBAction func doPingTest(_ sender: AnyObject) {
-        PingServers.instance.ping()
+    @IBAction func connectionDelayTest(_ sender: NSMenuItem) {
+        ConnectTestigManager.start()
+    }
+    
+    @IBAction func doPingTest(_ sender: NSMenuItem) {
+        icmpMenuItem.state = NSControl.StateValue(rawValue: 1)
+        tcpMenuItem.state = NSControl.StateValue(rawValue: 0)
+        UserDefaults.standard.set(false, forKey: "TCP")
+        UserDefaults.standard.synchronize()
+    }
+    
+    @IBAction func doTcpingTest(_ sender: NSMenuItem) {
+        icmpMenuItem.state = NSControl.StateValue(rawValue: 0)
+        tcpMenuItem.state = NSControl.StateValue(rawValue: 1)
+        UserDefaults.standard.set(true, forKey: "TCP")
+        UserDefaults.standard.synchronize()
+    }
+    
+    @IBAction func autoDelayTest(_ sender: NSMenuItem) {
+        let defaults = UserDefaults.standard
+        let enable = !defaults.bool(forKey: "AutoDelayTest")
+        
+        if enable {
+            if speedTimer == nil {
+                autoPingTimer = Timer.scheduledTimer(withTimeInterval: autoPingRepeatTimeinterval, repeats: true) { timer in
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                        ConnectTestigManager.start(inform: false)
+                    }
+                }
+            }
+        } else {
+            autoPingTimer?.invalidate()
+        }
+        
+        timingDelayTestMenuItem.state = NSControl.StateValue(rawValue: enable ? 1 : 0)
+        defaults.set(enable, forKey: "AutoDelayTest")
+        defaults.synchronize()
     }
     
     @IBAction func showSpeedTap(_ sender: NSMenuItem) {
@@ -538,15 +580,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
         updateMainMenu()
     }
     
-    //https://git.codingcafe.org/Mirrors/shadowsocks/ShadowsocksX-NG/blob/d56b108eb8a8087337b2c9c9ccc6743f5f9944a9/ShadowsocksX-NG/AppDelegate.swift
-    @IBAction func showLogs2(_ sender: NSMenuItem) {
-        let ws = NSWorkspace.shared
-        if let appUrl = ws.urlForApplication(withBundleIdentifier: "com.apple.Console") {
-            try! ws.launchApplication(at: appUrl
-                ,options: .default
-                ,configuration: convertToNSWorkspaceLaunchConfigurationKeyDictionary([convertFromNSWorkspaceLaunchConfigurationKey(NSWorkspace.LaunchConfigurationKey.arguments): "~/Library/Logs/ss-local.log"]))
-        }
-    }
     @IBAction func showLogs(_ sender: NSMenuItem) {
         let ws = NSWorkspace.shared
         if let appUrl = ws.urlForApplication(withBundleIdentifier: "com.apple.Console") {
@@ -647,9 +680,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
         if !defaults.bool(forKey: "ShadowsocksOn") {
             return
         }
-        let titleWidth:CGFloat = 0//statusItem?.title!.size(withAttributes: [NSFontAttributeName: statusItem?.button!.font!]).width//这里不包含IP白名单模式等等，需要重新调整//PS还是给上游加上白名单模式？
+        let titleWidth:CGFloat = 0
         let imageWidth:CGFloat = 22
-        //        statusItem?.length = titleWidth + imageWidth
         if statusItemView != nil {
             statusItemView.setIconWith(mode: mode)
         } else {
@@ -664,7 +696,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
             runningStatusMenuItem.title = "Shadowsocks: On".localized
             runningStatusMenuItem.image = NSImage(named: NSImage.statusAvailableName)
             toggleRunningMenuItem.title = "Turn Shadowsocks Off".localized
-            //image = NSImage(named: "menu_icon")!
             copyCommandLine.isHidden = false
             updateStatusItemUI()
         } else {
@@ -676,7 +707,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
                 statusItemView.setIconWith(mode: "disabled")
             }
         }
+        if defaults.bool(forKey: "TCP") {
+            icmpMenuItem.state = NSControl.StateValue(rawValue: 0)
+            tcpMenuItem.state = NSControl.StateValue(rawValue: 1)
+        } else {
+            icmpMenuItem.state = NSControl.StateValue(rawValue: 1)
+            tcpMenuItem.state = NSControl.StateValue(rawValue: 0)
+        }
         
+        timingDelayTestMenuItem.state = NSControl.StateValue(rawValue: UserDefaults.standard.bool(forKey: "AutoDelayTest") ? 1 : 0)
         ShowNetworkSpeedItem.state          = NSControl.StateValue(rawValue: defaults.bool(forKey: "enable_showSpeed") ? 1 : 0)
         connectAtLaunchMenuItem.state       = NSControl.StateValue(rawValue: defaults.bool(forKey: "ConnectAtLaunch")  ? 1 : 0)
         checkUpdateAtLaunchMenuItem.state   = NSControl.StateValue(rawValue: defaults.bool(forKey: "AutoCheckUpdate")  ? 1 : 0)
@@ -702,12 +741,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
         let autoUpdateSubscribeItem = updateSubscribeAtLaunchMenuItem
         let editSubscribeItem = editSubscribeMenuItem
         let copyHttpProxyExportCmdLineItem = copyHttpProxyExportCmdLineMenuItem
-        //        let pingItem = pingserverMenuItem
         
         serversMenuItem.submenu?.addItem(editSubscribeItem!)
+        serversMenuItem.submenu?.addItem(updateSubscribeItem!)
         serversMenuItem.submenu?.addItem(autoUpdateSubscribeItem!)
         autoUpdateSubscribeItem?.state = NSControl.StateValue(rawValue: UserDefaults.standard.bool(forKey: "AutoUpdateSubscribe") ? 1 : 0)
-        serversMenuItem.submenu?.addItem(updateSubscribeItem!)
         serversMenuItem.submenu?.addItem(showQRItem!)
         serversMenuItem.submenu?.addItem(scanQRItem!)
         serversMenuItem.submenu?.addItem(copyHttpProxyExportCmdLineItem!)
@@ -716,7 +754,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
         serversMenuItem.submenu?.addItem(exportAllServer!)
         serversMenuItem.submenu?.addItem(NSMenuItem.separator())
         serversMenuItem.submenu?.addItem(preferencesItem!)
-        //        serversMenuItem.submenu?.addItem(pingItem)
         
         if !mgr.profiles.isEmpty {
             serversMenuItem.submenu?.addItem(NSMenuItem.separator())
@@ -783,7 +820,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
                 }
             }
             
-            //            serversMenuItem.submenu?.addItem(item)
             serverMenuItems.append(item)
             i += 1
         }

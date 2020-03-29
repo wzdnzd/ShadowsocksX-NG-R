@@ -54,7 +54,6 @@ void ScanQRCodeOnScreen() {
         CGImageRef image = CGDisplayCreateImage(displays[displaysIndex]);
         NSArray *features = [detector featuresInImage:[CIImage imageWithCGImage:image]];
         for (CIQRCodeFeature *feature in features) {
-//            NSLog(@"%@", feature.messageString);
             if ( [feature.messageString hasPrefix:@"ss://"] )
             {
                 [foundSSUrls addObject:[NSURL URLWithString:feature.messageString]];
@@ -186,7 +185,6 @@ static NSDictionary<NSString*, id>* ParseSSRURL(NSURL* url) {
     
     urlString = [urlString stringByReplacingOccurrencesOfString:@"ssr://" withString:@"" options:NSAnchoredSearch range:NSMakeRange(0, urlString.length)];
     NSString *decodedString = decode64(urlString);
-    NSLog(@"%@", decodedString);
     if ([decodedString isEqual: @""]) {
         [[NSNotificationCenter defaultCenter]
          postNotificationName:@"NOTIFY_INVALIDE_QR"
@@ -230,15 +228,13 @@ static NSDictionary<NSString*, id>* ParseSSRURL(NSURL* url) {
         NSString *ssrObfs = [firstParam substringToIndex:range.location];//第五个参数是混淆协议
         
         firstParam = [firstParam substringFromIndex:range.location + range.length];
-        //                    range = [firstParam rangeOfString:@":"];
-        NSString *password = decode64(firstParam);// [[NSString alloc] initWithData:[[NSData alloc] initWithBase64EncodedString:firstParam options:0]encoding:NSUTF8StringEncoding];//第五个参数是base64密码
+        NSString *password = decode64(firstParam);
         
         NSString *ssrObfsParam = @"";
         NSString *remarks = @"";
         NSString *ssrProtocolParam = @"";
         NSString *ssrGroup = @"";
         for (NSString *key in parserLastParamDict) {
-            //                NSLog(@"key: %@ value: %@", key, parserLastParamDict[key]);
             if ([key  isEqual: @"obfsparam"]) {
                 ssrObfsParam = parserLastParamDict[key];
             } else if ([key  isEqual: @"remarks"]) {
@@ -262,7 +258,6 @@ static NSDictionary<NSString*, id>* ParseSSRURL(NSURL* url) {
                  @"ssrGroup":ssrGroup,
                  };
     }
-    //}
     return nil;
 }
 

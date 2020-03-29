@@ -23,7 +23,7 @@
     for (NSString *key in [sets allKeys]) {
         NSMutableDictionary *service = [sets objectForKey:key];
         NSString *userDefinedName = [service valueForKey:(__bridge NSString *)kSCPropUserDefinedName];
-        
+
         BOOL isActive = ![service objectForKey:(NSString *)kSCResvInactive];
 
         if (isActive) {

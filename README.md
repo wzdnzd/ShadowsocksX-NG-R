@@ -12,6 +12,19 @@
 > 推荐使用由[@paradiseduo](https://github.com/paradiseduo/ShadowsocksX-NG-R8)维护的版本，作者更新挺频繁！本[repo](https://github.com/wzdnzd/ShadowsocksX-NG-R)纯属只是为了个人特殊需求
 
 
+## 软件删除方法
+首先从应用程序中将.app文件放到废纸篓（随便什么方式）
+然后打开命令行，依次输入：
+```
+rm -rf /Library/Application\ Support/ShadowsocksX-NG-R8
+rm -rf ~/Library/Application\ Support/ShadowsocksX-NG-R8
+rm -rf ~/Library/LaunchAgents/com.qiuyuzhou.shadowsocksX-NG.http.plist
+rm -rf ~/Library/LaunchAgents/com.qiuyuzhou.shadowsocksX-NG.local.plist
+rm -rf ~/.ShadowsocksX-NG
+```
+如果提示权限不足，请sudo后执行
+
+
 # ShadowsocksX-NG-R
 
 [![Build Status](https://travis-ci.org/shadowsocksr/ShadowsocksX-NG.svg?branches=develop)](https://travis-ci.org/shadowsocksr/ShadowsocksX-NG)
@@ -48,7 +61,7 @@ Then I rewrite the GUI code by swift.
 
 ### Building
 
-- Xcode 11.1+
+- Xcode 11.4+
 - cocoapod 1.8.4+
 
 ## Fetures
