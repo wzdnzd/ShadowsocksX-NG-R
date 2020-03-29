@@ -59,6 +59,7 @@ class SubscribePreferenceWindowController: NSWindowController
                 editingSubscribe.updateServerFromFeed()
             }
         }
+        sbMgr.timingUpdateSubscribes()
         sbMgr.save()
         window?.performClose(self)
     }

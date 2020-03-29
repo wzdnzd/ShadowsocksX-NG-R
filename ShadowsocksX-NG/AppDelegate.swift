@@ -184,6 +184,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
             }
         }
         
+        // 添加自动更新订阅定时器
+        SubscribeManager.instance.timingUpdateSubscribes()
+        
         DispatchQueue.global().async {
             // Version Check!
             if defaults.bool(forKey: "AutoCheckUpdate") {
