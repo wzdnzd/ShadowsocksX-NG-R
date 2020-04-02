@@ -138,7 +138,7 @@ class ServerProfileManager: NSObject {
         openPanel.becomeKey()
         openPanel.begin { (result) -> Void in
             // TODO not freeze the screen when running import process
-            if (result.rawValue == NSFileHandlingPanelOKButton && (openPanel.url) != nil) {
+            if (result.rawValue == NSApplication.ModalResponse.OK.rawValue && (openPanel.url) != nil) {
                 let fileManager = FileManager.default
                 let filePath:String = (openPanel.url?.path)!
                 if (fileManager.fileExists(atPath: filePath) && filePath.hasSuffix("json")) {

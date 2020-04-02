@@ -24,7 +24,7 @@
 @import Foundation;
 
 
-typedef void (^BRLOptionParserOptionBlock)();
+typedef void (^BRLOptionParserOptionBlock)(void);
 typedef void (^BRLOptionParserOptionBlockWithArgument)(NSString *value);
 
 

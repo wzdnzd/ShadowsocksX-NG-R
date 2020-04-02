@@ -56,7 +56,7 @@ class SubscribePreferenceWindowController: NSWindowController
             }
             
             if editingSubscribe.isActive {
-                editingSubscribe.updateServerFromFeed()
+                editingSubscribe.updateServerFromFeed(inform: false)
             }
         }
         sbMgr.timingUpdateSubscribes()
