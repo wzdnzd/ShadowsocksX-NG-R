@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="16096" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
+        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16096"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -215,7 +216,7 @@ DQ
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OdW-yK-LQ8">
-                        <rect key="frame" x="367" y="62" width="95" height="18"/>
+                        <rect key="frame" x="367" y="63" width="95" height="18"/>
                         <buttonCell key="cell" type="check" title="AutoUpdate" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="wAH-F1-KhY">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>

@@ -9,7 +9,7 @@
 import Foundation
 
 let SS_LOCAL_VERSION = "2.5.6.12.static"
-let PRIVOXY_VERSION = "3.0.26.static"
+let PRIVOXY_VERSION = "3.0.28.static"
 let APP_SUPPORT_DIR = "/Library/Application Support/ShadowsocksX-NG-R8/"
 let LAUNCH_AGENT_DIR = "/Library/LaunchAgents/"
 let LAUNCH_AGENT_CONF_SSLOCAL_NAME = "com.qiuyuzhou.shadowsocksX-NG.local.plist"
@@ -227,7 +227,8 @@ func generatePrivoxyLauchAgentPlist() -> Bool {
         "KeepAlive": true,
         "StandardOutPath": logFilePath,
         "StandardErrorPath": logFilePath,
-        "ProgramArguments": arguments
+        "ProgramArguments": arguments,
+        "EnvironmentVariables": ["DYLD_LIBRARY_PATH": NSHomeDirectory() + APP_SUPPORT_DIR]
     ]
     dict.write(toFile: plistFilepath, atomically: true)
     let Sha1Sum = getFileSHA1Sum(plistFilepath)
@@ -279,7 +280,8 @@ func InstallPrivoxy() {
     let fileMgr = FileManager.default
     let homeDir = NSHomeDirectory()
     let appSupportDir = homeDir+APP_SUPPORT_DIR
-    if !fileMgr.fileExists(atPath: appSupportDir + "privoxy-\(PRIVOXY_VERSION)/privoxy") {
+    if !fileMgr.fileExists(atPath: appSupportDir + "privoxy-\(PRIVOXY_VERSION)/privoxy")
+        || !fileMgr.fileExists(atPath: appSupportDir + "libpcre.1.dylib") {
         let bundle = Bundle.main
         let installerPath = bundle.path(forResource: "install_privoxy.sh", ofType: nil)
         let task = Process.launchedProcess(launchPath: installerPath!, arguments: [""])
