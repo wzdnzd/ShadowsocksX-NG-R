@@ -8,9 +8,6 @@
 /* Class = "NSWindow"; title = "高级设置"; ObjectID = "F0z-JX-Cv5"; */
 "F0z-JX-Cv5.title" = "高级设置";
 
-/* Class = "NSTextFieldCell"; title = "Seconds"; ObjectID = "Gd3-Fm-sWh"; */
-"Gd3-Fm-sWh.title" = "秒";
-
 /* Class = "NSBox"; title = "Box"; ObjectID = "ayu-Tb-kmf"; */
 "ayu-Tb-kmf.title" = "Box";
 
@@ -20,14 +17,14 @@
 /* Class = "NSTextFieldCell"; title = "GFW List URL:"; ObjectID = "dg0-gS-z5V"; */
 "dg0-gS-z5V.title" = "GFW LIST URL:";
 
-/* Class = "NSTextFieldCell"; title = "Timeout:"; ObjectID = "i4l-2S-gOQ"; */
-"i4l-2S-gOQ.title" = "超时:";
+/* Class = "NSTextFieldCell"; title = "Timeout:"; ObjectID = "JSj-Cd-RDI"; */
+"JSj-Cd-RDI.title" = "超时(秒):";
 
 /* Class = "NSTextFieldCell"; title = "本地 Socks5 监听端口:"; ObjectID = "qRs-ow-vVB"; */
 "qRs-ow-vVB.title" = "本地 Socks5 监听端口:";
 
 /* Class = "NSTextFieldCell"; title = "Local PAC Listen Address:"; ObjectID = "dvL-Ic-Wae"; */
-"dvL-Ic-Wae.title" = "本地 PAC 监听地址:";
+"LM7-Ux-NiB.title" = "本地 PAC 监听地址:";
 
 /* Class = "NSTextFieldCell"; title = "Local PAC Listen Port:"; ObjectID = "PSg-XK-qhl"; */
 "PSg-XK-qhl.title" = "本地 PAC 监听端口:";
@@ -37,3 +34,9 @@
 
 /* Class = "NSTextFieldCell"; title = "White IP List URL:"; ObjectID = "qhu-d1-qgq"; */
 "qhu-d1-qgq.title" = "ACL GFW List 列表 URL:";
+
+/* Class = "NSTextFieldCell"; title = "ACL Back China URL:"; ObjectID = "cwt-37-PW1"; */
+"cwt-37-PW1.title" = "ACL 国内代理黑名单列表 URL:";
+
+/* Class = "NSButtonCell"; title = "Enable Verbose Mode"; ObjectID = "dCD-gg-I2i"; */
+"dCD-gg-I2i.title" = "启用 Verbose 模式";

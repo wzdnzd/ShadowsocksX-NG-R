@@ -74,7 +74,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
     let repeatTimeinterval: TimeInterval = 2.0
     
     var autoPingTimer:Timer?
-    let autoPingRepeatTimeinterval: TimeInterval = 600.0
+    let autoPingRepeatTimeinterval: TimeInterval = 3600.0
     
     // MARK: Application function
     func applicationDidFinishLaunching(_ aNotification: Notification) {

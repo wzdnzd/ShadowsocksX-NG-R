@@ -129,47 +129,26 @@ class Tcping {
                 let nf = NumberFormatter()
                 nf.numberStyle = .decimal
                 nf.maximumFractionDigits = 3
-                var fastID = 0
-                var fastSpeed = Double.infinity
+                var fastestId = 0
+                var fastestSpeed = Double.infinity
+                
                 //存数据与找出最快节点
                 for i in 0..<SerMgr.profiles.count {
                     let speed = w.speedStringDomain[SerMgr.profiles[i].serverHost]!.averageSpeed()
                     if speed.doubleValue != Double.infinity {
                         SerMgr.profiles[i].latency = nf.string(from: speed)
                     }
-                    if speed.doubleValue < fastSpeed {
-                        fastSpeed = speed.doubleValue
-                        fastID = i
+                    if speed.doubleValue < fastestSpeed {
+                        fastestSpeed = speed.doubleValue
+                        fastestId = i
                     }
                 }
                 
                 //因为是个单例，数组不会释放，因此需要清空数据，以免下次测试混入前一次的数据
                 w.pings.removeAll()
                 w.speedStringDomain = [String: TcpCollection]()
-                if fastSpeed != Double.infinity {
-                    if fastID < ServerProfileManager.instance.profiles.count && SerMgr.profiles[fastID].isSame(profile: ServerProfileManager.instance.profiles[fastID]) {
-                        ServerProfileManager.instance.setActiveProfiledId(SerMgr.profiles[fastID].uuid)
-                    }
-                    
-                    if inform {
-                    let notice = NSUserNotification()
-                        notice.title = "TCP测试完成！最快\(SerMgr.profiles[fastID].latency!)ms"
-                        notice.subtitle = "最快的是\(SerMgr.profiles[fastID].serverHost) \(SerMgr.profiles[fastID].remark)"
-                        
-                        NSUserNotificationCenter.default.deliver(notice)
-                    }
-                    
-                    UserDefaults.standard.setValue("\(SerMgr.profiles[fastID].latency!)", forKey: "FastestNode")
-                    UserDefaults.standard.synchronize()
-                    
-                    DispatchQueue.main.async {
-                        isTesting = false
-                        (NSApplication.shared.delegate as! AppDelegate).updateServersMenu()
-                        (NSApplication.shared.delegate as! AppDelegate).updateRunningModeMenu()
-                    }
-                }
+                ConnectTestigManager.sync(SerMgr: SerMgr, fastestId: fastestId, fastestSpeed: fastestSpeed, title: "TCP测试完成！最快", inform: inform)
             }
         }
-
     }
 }

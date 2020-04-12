@@ -75,7 +75,7 @@ class PingServers:NSObject{
     }
     
     // TODO
-    func ping(inform: Bool=true){
+    func ping(inform: Bool=true) {
         let SerMgr = ServerProfileManager.instance
         if SerMgr.profiles.count <= 0 {
             return
@@ -98,40 +98,18 @@ class PingServers:NSObject{
             }
         }
         group.notify(queue: DispatchQueue.main) {
-            var fastID = 0
-            var fastTime = Double.infinity
+            var fastestId = 0
+            var fastestSpeed = Double.infinity
             
             for k in 0..<SerMgr.profiles.count {
                 if let late = SerMgr.profiles[k].latency{
-                    if let latency = Double(late), latency < fastTime {
-                        fastTime = latency
-                        fastID = k
+                    if let latency = Double(late), latency < fastestSpeed {
+                        fastestSpeed = latency
+                        fastestId = k
                     }
                 }
             }
-            
-            if fastTime != Double.infinity {
-                if fastID < ServerProfileManager.instance.profiles.count && SerMgr.profiles[fastID].isSame(profile: ServerProfileManager.instance.profiles[fastID]) {
-                    ServerProfileManager.instance.setActiveProfiledId(SerMgr.profiles[fastID].uuid)
-                }
-                
-                if inform {
-                    let notice = NSUserNotification()
-                    notice.title = "ICMP测试完成！最快\(SerMgr.profiles[fastID].latency!)ms"
-                    notice.subtitle = "最快的是\(SerMgr.profiles[fastID].serverHost) \(SerMgr.profiles[fastID].remark)"
-                    
-                    NSUserNotificationCenter.default.deliver(notice)
-                }
-                
-                UserDefaults.standard.setValue("\(SerMgr.profiles[fastID].latency!)", forKey: "FastestNode")
-                UserDefaults.standard.synchronize()
-                
-                DispatchQueue.main.async {
-                    isTesting = false
-                    (NSApplication.shared.delegate as! AppDelegate).updateServersMenu()
-                    (NSApplication.shared.delegate as! AppDelegate).updateRunningModeMenu()
-                }
-            }
+            ConnectTestigManager.sync(SerMgr: SerMgr, fastestId: fastestId, fastestSpeed: fastestSpeed, title: "ICMP测试完成！最快", inform: inform)
         }
     }
 }
@@ -140,11 +118,46 @@ class ConnectTestigManager {
     static func start(inform: Bool=true) {
         if !isTesting {
             isTesting = true
+            
             if UserDefaults.standard.bool(forKey: "TCP") {
                 Tcping.instance.ping(inform: inform)
             } else {
                 PingServers.instance.ping(inform: inform)
             }
+        }
+    }
+    
+    static func sync(SerMgr: ServerProfileManager, fastestId:Int, fastestSpeed:Double, title: String, inform: Bool) {
+        if fastestId < 0 || fastestSpeed == Double.infinity || SerMgr.profiles.count <= fastestId {
+            return
+        }
+        
+        if fastestId < ServerProfileManager.instance.profiles.count {
+            let fastestProfile = SerMgr.profiles[fastestId]
+            if fastestProfile.isSame(profile: ServerProfileManager.instance.profiles[fastestId])
+                && !fastestProfile.isSame(profile: ServerProfileManager.instance.getActiveProfile() ?? fastestProfile) {
+                ServerProfileManager.instance.setActiveProfiledId(fastestProfile.uuid)
+                if writeSSLocalConfFile(fastestProfile.toJsonConfig()) {
+                    ReloadConfSSLocal()
+                }
+            }
+        }
+        
+        if inform {
+            let notice = NSUserNotification()
+            notice.title = "\(title)\(SerMgr.profiles[fastestId].latency!)ms"
+            notice.subtitle = "最快的是\(SerMgr.profiles[fastestId].serverHost) \(SerMgr.profiles[fastestId].remark)"
+            
+            NSUserNotificationCenter.default.deliver(notice)
+        }
+        
+        UserDefaults.standard.setValue("\(SerMgr.profiles[fastestId].latency!)", forKey: "FastestNode")
+        UserDefaults.standard.synchronize()
+        
+        DispatchQueue.main.async {
+            isTesting = false
+            (NSApplication.shared.delegate as! AppDelegate).updateServersMenu()
+            (NSApplication.shared.delegate as! AppDelegate).updateRunningModeMenu()
         }
     }
 }
