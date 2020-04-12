@@ -1,0 +1,15 @@
+
+/* Class = "NSButtonCell"; title = "Automatic Delay Test"; ObjectID = "Pr7-wR-tm7"; */
+"Pr7-wR-tm7.title" = "定时测试延迟";
+
+/* Class = "NSButtonCell"; title = "Automatic Subscribe Update"; ObjectID = "EaV-dU-PQU"; */
+"EaV-dU-PQU.title" = "定时更新订阅";
+
+/* Class = "NSTextFieldCell"; title = "Subscribe Update Interaval(Minutes):"; ObjectID = "2Sd-yn-gdY"; */
+"2Sd-yn-gdY.title" = "订阅更新时间间隔(小时):";
+
+/* Class = "NSTextFieldCell"; title = "Speed Test Interaval(Minutes):"; ObjectID = "qd0-kc-ttB"; */
+"qd0-kc-ttB.title" = "延迟测试时间间隔(分钟):";
+
+/* Class = "NSWindow"; title = "Time Interaval Preferences"; ObjectID = "vS3-DL-Nq3"; */
+"vS3-DL-Nq3.title" = "定时更新设置";

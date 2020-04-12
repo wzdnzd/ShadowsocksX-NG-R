@@ -21,6 +21,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
     var httpPreferencesWinCtrl : HTTPPreferencesWindowController!
     var subscribePreferenceWinCtrl: SubscribePreferenceWindowController!
     var toastWindowCtrl: ToastWindowController!
+    var timeInteravalPreferencesWinCtrl : TimeInteravalPreferencesWindowController!
     
     var launchAtLoginController: LaunchAtLoginController = LaunchAtLoginController()
     
@@ -56,7 +57,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
     @IBOutlet weak var checkUpdateAtLaunchMenuItem: NSMenuItem!
     @IBOutlet var updateSubscribeAtLaunchMenuItem: NSMenuItem!
     @IBOutlet var manualUpdateSubscribeMenuItem: NSMenuItem!
-    @IBOutlet weak var timingDelayTestMenuItem: NSMenuItem!
     @IBOutlet var editSubscribeMenuItem: NSMenuItem!
     
     @IBOutlet weak var copyCommandLine: NSMenuItem!
@@ -65,16 +65,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
     
     
     // MARK: Variables
-    var statusItemView:StatusItemView!
+    var statusItemView: StatusItemView!
     var statusItem: NSStatusItem?
-    var speedMonitor:NetSpeedMonitor?
+    var speedMonitor: NetSpeedMonitor?
     var globalSubscribeFeed: Subscribe!
     
-    var speedTimer:Timer?
+    var speedTimer: Timer?
     let repeatTimeinterval: TimeInterval = 2.0
     
-    var autoPingTimer:Timer?
-    let autoPingRepeatTimeinterval: TimeInterval = 3600.0
+    var autoPingTimer: Timer?
+    var autoUpdateSubscribesTimer: Timer?
     
     // MARK: Application function
     func applicationDidFinishLaunching(_ aNotification: Notification) {
@@ -110,7 +110,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
             "ACLFileName": "chn.acl",
             "Subscribes": [],
             "AutoUpdateSubscribe": false,
-            "AutoDelayTest": false
+            "AutoDelayTest": false,
+            "TimeInteraval.DelayTestEnable": true,
+            "TimeInteraval.SubscribeUpdateEnable": true,
+            "TimeInteraval.DelayTestTime": NSNumber(value: 30 as UInt16),
+            "TimeInteraval.SubscribeUpdateTime": NSNumber(value: 3 as UInt16)
         ])
         
         setUpMenu(defaults.bool(forKey: "enable_showSpeed"))
@@ -176,16 +180,19 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
             toggleRunning(toggleRunningMenuItem)
         }
         
-        if defaults.bool(forKey: "AutoDelayTest") {
-            autoPingTimer = Timer.scheduledTimer(withTimeInterval: autoPingRepeatTimeinterval, repeats: true) { timer in
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    ConnectTestigManager.start(inform: false)
-                }
-            }
-        }
+        // 自动测试延迟
+        self.timingTestDelay()
         
         // 添加自动更新订阅定时器
-        SubscribeManager.instance.timingUpdateSubscribes()
+        self.timingUpdateSubscribes()
+        
+        notifyCenter.addObserver(forName: NOTIFY_TIME_INTERAVAL_DELAY_CHANGED, object: nil, queue: nil) { (note: Notification) in
+            self.timingTestDelay()
+        }
+        
+        notifyCenter.addObserver(forName: NOTIFY_TIME_INTERAVAL_SUBSCRIBE_CHANGED, object: nil, queue: nil) { (note: Notification) in
+            self.timingUpdateSubscribes()
+        }
         
         DispatchQueue.global().async {
             // Version Check!
@@ -216,6 +223,54 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
         let defaults = UserDefaults.standard
         defaults.set(false, forKey: "ShadowsocksOn")
         defaults.synchronize()
+    }
+    
+    private func timingTestDelay() {
+        let defaults = UserDefaults.standard
+        let enable = defaults.bool(forKey: "TimeInteraval.DelayTestEnable")
+        
+        if enable {
+            if autoPingTimer != nil {
+                autoPingTimer?.invalidate()
+            }
+            
+            autoPingTimer = Timer.scheduledTimer(withTimeInterval: TimeInterval(defaults.integer(forKey: "TimeInteraval.DelayTestTime") * 60), repeats: true) { timer in
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    ConnectTestigManager.start(inform: false)
+                }
+            }
+        } else {
+            autoPingTimer?.invalidate()
+        }
+    }
+    
+    private func timingUpdateSubscribes() {
+        let defaults = UserDefaults.standard
+        let instance = SubscribeManager.instance
+        var hasAutoUpdateEnabledSubscribe = false
+        
+        for i in 0..<instance.subscribes.count {
+            if instance.subscribes[i].isActive && instance.subscribes[i].getAutoUpdateEnable() {
+                hasAutoUpdateEnabledSubscribe = true
+                break
+            }
+        }
+        
+        let enable = defaults.bool(forKey: "TimeInteraval.SubscribeUpdateEnable") && hasAutoUpdateEnabledSubscribe
+        
+        if enable {
+            if autoUpdateSubscribesTimer != nil {
+                autoUpdateSubscribesTimer?.invalidate()
+            }
+            
+            autoUpdateSubscribesTimer = Timer.scheduledTimer(withTimeInterval: TimeInterval(defaults.integer(forKey: "TimeInteraval.SubscribeUpdateTime") * 3600), repeats: true) { timer in
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    instance.updateAllServerFromSubscribe(auto: true, inform: false, ping: true)
+                }
+            }
+        } else {
+            autoUpdateSubscribesTimer?.invalidate()
+        }
     }
     
     func applyConfig() {
@@ -510,6 +565,18 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
         ctrl.window?.makeKeyAndOrderFront(self)
     }
     
+    @IBAction func editTimeInteravalPreferences(_ sender: NSMenuItem) {
+        if timeInteravalPreferencesWinCtrl != nil {
+            timeInteravalPreferencesWinCtrl.close()
+        }
+        let ctrl = TimeInteravalPreferencesWindowController(windowNibName: "TimeInteravalPreferencesWindowController")
+        timeInteravalPreferencesWinCtrl = ctrl
+        
+        ctrl.showWindow(self)
+        NSApp.activate(ignoringOtherApps: true)
+        ctrl.window?.makeKeyAndOrderFront(self)
+    }
+    
     @IBAction func editProxyPreferences(_ sender: NSMenuItem) {
         if proxyPreferencesWinCtrl != nil {
             proxyPreferencesWinCtrl.close()
@@ -550,27 +617,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
         tcpMenuItem.state = NSControl.StateValue(rawValue: 1)
         UserDefaults.standard.set(true, forKey: "TCP")
         UserDefaults.standard.synchronize()
-    }
-    
-    @IBAction func autoDelayTest(_ sender: NSMenuItem) {
-        let defaults = UserDefaults.standard
-        let enable = !defaults.bool(forKey: "AutoDelayTest")
-        
-        if enable {
-            if speedTimer == nil {
-                autoPingTimer = Timer.scheduledTimer(withTimeInterval: autoPingRepeatTimeinterval, repeats: true) { timer in
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                        ConnectTestigManager.start(inform: false)
-                    }
-                }
-            }
-        } else {
-            autoPingTimer?.invalidate()
-        }
-        
-        timingDelayTestMenuItem.state = NSControl.StateValue(rawValue: enable ? 1 : 0)
-        defaults.set(enable, forKey: "AutoDelayTest")
-        defaults.synchronize()
     }
     
     @IBAction func showSpeedTap(_ sender: NSMenuItem) {
@@ -717,8 +763,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
             icmpMenuItem.state = NSControl.StateValue(rawValue: 1)
             tcpMenuItem.state = NSControl.StateValue(rawValue: 0)
         }
-        
-        timingDelayTestMenuItem.state = NSControl.StateValue(rawValue: UserDefaults.standard.bool(forKey: "AutoDelayTest") ? 1 : 0)
         ShowNetworkSpeedItem.state          = NSControl.StateValue(rawValue: defaults.bool(forKey: "enable_showSpeed") ? 1 : 0)
         connectAtLaunchMenuItem.state       = NSControl.StateValue(rawValue: defaults.bool(forKey: "ConnectAtLaunch")  ? 1 : 0)
         checkUpdateAtLaunchMenuItem.state   = NSControl.StateValue(rawValue: defaults.bool(forKey: "AutoCheckUpdate")  ? 1 : 0)

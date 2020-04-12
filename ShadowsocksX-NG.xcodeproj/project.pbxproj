@@ -26,6 +26,8 @@
 		0AAB28EF241CC36400B109D9 /* ProxyPreferencesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AAB28EE241CC36400B109D9 /* ProxyPreferencesController.swift */; };
 		31EC8002F6D683D17037DF16 /* Pods_ShadowsocksX_NGTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6618B10B340A3D7A925E0A9F /* Pods_ShadowsocksX_NGTests.framework */; };
 		8B0DDC83243CD7FE005AAFD3 /* libpcre.1.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 8B0DDC80243CD7D5005AAFD3 /* libpcre.1.dylib */; };
+		8B13F2E82442ED3A0016201A /* TimeInteravalPreferencesWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B13F2E62442ED390016201A /* TimeInteravalPreferencesWindowController.swift */; };
+		8B13F2EB2442ED4F0016201A /* TimeInteravalPreferencesWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8B13F2E92442ED4F0016201A /* TimeInteravalPreferencesWindowController.xib */; };
 		8B36E8552423E6EA00C05E53 /* ProxyPreferencesController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8B36E8532423E6E900C05E53 /* ProxyPreferencesController.xib */; };
 		8BE3F71C2423290B0092FDEA /* remove_privoxy.sh in Resources */ = {isa = PBXBuildFile; fileRef = 8BE3F719242328BA0092FDEA /* remove_privoxy.sh */; };
 		8BE3F71D2423290B0092FDEA /* remove_ss_local.sh in Resources */ = {isa = PBXBuildFile; fileRef = 8BE3F71B242328E50092FDEA /* remove_ss_local.sh */; };
@@ -160,6 +162,10 @@
 		7E2417EA26470A73DF17FC78 /* Pods-ShadowsocksX-NG.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ShadowsocksX-NG.release.xcconfig"; path = "Target Support Files/Pods-ShadowsocksX-NG/Pods-ShadowsocksX-NG.release.xcconfig"; sourceTree = "<group>"; };
 		8428A07C59DC83DCFDB0D9D4 /* Pods-ShadowsocksX-NGTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ShadowsocksX-NGTests.debug.xcconfig"; path = "Target Support Files/Pods-ShadowsocksX-NGTests/Pods-ShadowsocksX-NGTests.debug.xcconfig"; sourceTree = "<group>"; };
 		8B0DDC80243CD7D5005AAFD3 /* libpcre.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libpcre.1.dylib; sourceTree = "<group>"; };
+		8B13F2E62442ED390016201A /* TimeInteravalPreferencesWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeInteravalPreferencesWindowController.swift; sourceTree = "<group>"; };
+		8B13F2EA2442ED4F0016201A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/TimeInteravalPreferencesWindowController.xib; sourceTree = "<group>"; };
+		8B13F2F02442F33A0016201A /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/MainMenu.strings"; sourceTree = "<group>"; };
+		8B13F2F2244305700016201A /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/TimeInteravalPreferencesWindowController.strings"; sourceTree = "<group>"; };
 		8B36E8542423E6E900C05E53 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/ProxyPreferencesController.xib; sourceTree = "<group>"; };
 		8B36E8562423E6F000C05E53 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/ProxyPreferencesController.strings"; sourceTree = "<group>"; };
 		8BAB239E2430F24F003D6B2F /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/SubscribePreferenceWindowController.strings"; sourceTree = "<group>"; };
@@ -237,7 +243,6 @@
 		C6E28E911DA79380004F8330 /* HTTPPreferencesWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPPreferencesWindowController.swift; sourceTree = "<group>"; };
 		C6E28E961DA79705004F8330 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/HTTPPreferencesWindowController.xib; sourceTree = "<group>"; };
 		C6E28E991DA79709004F8330 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/HTTPPreferencesWindowController.strings"; sourceTree = "<group>"; };
-		C6E28E9B1DA79FB9004F8330 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/MainMenu.strings"; sourceTree = "<group>"; };
 		C8E42A6A1D4F270A0074C7EA /* UserRulesController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserRulesController.swift; sourceTree = "<group>"; };
 		C8E42A6F1D4F2CAF0074C7EA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/UserRulesController.xib; sourceTree = "<group>"; };
 		C8E42A721D4F2CB10074C7EA /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/UserRulesController.strings"; sourceTree = "<group>"; };
@@ -415,6 +420,8 @@
 		9B3FFF0B1D05D8B80019A709 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				8B13F2E92442ED4F0016201A /* TimeInteravalPreferencesWindowController.xib */,
+				8B13F2E62442ED390016201A /* TimeInteravalPreferencesWindowController.swift */,
 				8B36E8532423E6E900C05E53 /* ProxyPreferencesController.xib */,
 				0AAB28EE241CC36400B109D9 /* ProxyPreferencesController.swift */,
 				9B3FFF331D08CEF70019A709 /* SWBQRCodeWindowController.xib */,
@@ -600,6 +607,7 @@
 				9BE8FBBF1D0B211600CAFD01 /* libcrypto.1.0.0.dylib in Resources */,
 				9B3FFF541D09E2D10019A709 /* proxy_conf_helper in Resources */,
 				C6E28E951DA79705004F8330 /* HTTPPreferencesWindowController.xib in Resources */,
+				8B13F2EB2442ED4F0016201A /* TimeInteravalPreferencesWindowController.xib in Resources */,
 				9BEEF0691D04D4D500FC52B3 /* install_ss_local.sh in Resources */,
 				086A31451F1AF797004C7285 /* SubscribePreferenceWindowController.xib in Resources */,
 				9B2491B41D0ACC3A003BBECC /* PreferencesWindowController.xib in Resources */,
@@ -761,6 +769,7 @@
 				9BEEF06E1D04DCE400FC52B3 /* ServerProfile.swift in Sources */,
 				083BF83B1D8275A800831C68 /* SystemThemeChangeHelper.swift in Sources */,
 				9B3FFF0D1D05FEB30019A709 /* Utils.swift in Sources */,
+				8B13F2E82442ED3A0016201A /* TimeInteravalPreferencesWindowController.swift in Sources */,
 				9BEEF0751D04EF3E00FC52B3 /* PreferencesWindowController.swift in Sources */,
 				9B0BFFE91D0460A70040E62B /* AppDelegate.swift in Sources */,
 				9BA04B231D23D5A5005AAD7F /* ProxyConfTool.m in Sources */,
@@ -812,6 +821,15 @@
 			name = SubscribePreferenceWindowController.xib;
 			sourceTree = "<group>";
 		};
+		8B13F2E92442ED4F0016201A /* TimeInteravalPreferencesWindowController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8B13F2EA2442ED4F0016201A /* Base */,
+				8B13F2F2244305700016201A /* zh-Hans */,
+			);
+			name = TimeInteravalPreferencesWindowController.xib;
+			sourceTree = "<group>";
+		};
 		8B36E8532423E6E900C05E53 /* ProxyPreferencesController.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -825,7 +843,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				9B0BFFED1D0460A70040E62B /* Base */,
-				C6E28E9B1DA79FB9004F8330 /* zh-Hans */,
+				8B13F2F02442F33A0016201A /* zh-Hans */,
 			);
 			name = MainMenu.xib;
 			sourceTree = "<group>";

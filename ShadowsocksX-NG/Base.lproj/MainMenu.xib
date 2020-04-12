@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="16096" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
+        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16096"/>
     </dependencies>
     <objects>
@@ -42,7 +43,6 @@
                 <outlet property="showQRCodeMenuItem" destination="R6A-96-Zcb" id="XHz-pz-nCz"/>
                 <outlet property="statusMenu" destination="Hob-KD-bx9" id="clA-ZW-0pT"/>
                 <outlet property="tcpMenuItem" destination="eL4-tv-vDa" id="AMk-hV-HJ3"/>
-                <outlet property="timingDelayTestMenuItem" destination="krb-uN-N94" id="HrO-Hf-C5C"/>
                 <outlet property="toggleRunningMenuItem" destination="GSu-Tf-StS" id="XHw-pU-nCa"/>
                 <outlet property="updateSubscribeAtLaunchMenuItem" destination="nQ4-Nv-tox" id="dOD-xa-Rw4"/>
                 <outlet property="whiteListModeMenuItem" destination="RvZ-Zn-29U" id="2v5-Bd-EDj"/>
@@ -160,10 +160,10 @@
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="lpp-3M-imf"/>
-                            <menuItem title="Auto Delay Test" id="krb-uN-N94">
+                            <menuItem title="Time Interval Preference" id="W8T-Qh-WOm">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
-                                    <action selector="autoDelayTest:" target="Voe-Tx-rLC" id="KUE-Nu-FEA"/>
+                                    <action selector="editTimeInteravalPreferences:" target="Voe-Tx-rLC" id="vSB-h6-cX4"/>
                                 </connections>
                             </menuItem>
                         </items>

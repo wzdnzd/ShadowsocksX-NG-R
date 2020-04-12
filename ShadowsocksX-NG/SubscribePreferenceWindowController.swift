@@ -59,8 +59,9 @@ class SubscribePreferenceWindowController: NSWindowController
                 editingSubscribe.updateServerFromFeed(inform: false)
             }
         }
-        sbMgr.timingUpdateSubscribes()
+        
         sbMgr.save()
+        NotificationCenter.default.post(name: NOTIFY_TIME_INTERAVAL_SUBSCRIBE_CHANGED, object: nil)
         window?.performClose(self)
     }
     

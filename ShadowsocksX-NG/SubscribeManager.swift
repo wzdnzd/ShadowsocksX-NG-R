@@ -15,9 +15,6 @@ class SubscribeManager:NSObject{
     var subscribesDefault : [[String: AnyObject]]
     let defaults = UserDefaults.standard
     
-    var autoUpdateSubscribesTimer:Timer?
-    let repeatTimeinterval: TimeInterval = 3600.0
-    
     fileprivate override init() {
         subscribes = []
         subscribesDefault = [[:]]
@@ -90,25 +87,6 @@ class SubscribeManager:NSObject{
             dispatch.notify(queue: DispatchQueue.main) {
                 ConnectTestigManager.start()
             }
-        }
-    }
-    
-    func timingUpdateSubscribes() {
-        var enable = false
-        for i in 0..<subscribes.count {
-            if subscribes[i].isActive && subscribes[i].getAutoUpdateEnable() {
-                enable = true
-                break
-            }
-        }
-        if enable && autoUpdateSubscribesTimer == nil {
-            autoUpdateSubscribesTimer = Timer.scheduledTimer(withTimeInterval: repeatTimeinterval, repeats: true) { timer in
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    self.updateAllServerFromSubscribe(auto: true, inform: false, ping: false)
-                }
-            }
-        } else if !enable {
-            autoUpdateSubscribesTimer?.invalidate()
         }
     }
 }

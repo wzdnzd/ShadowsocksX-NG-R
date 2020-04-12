@@ -191,7 +191,6 @@ func SyncSSLocal() {
         }
         let on = UserDefaults.standard.bool(forKey: "ShadowsocksOn")
         if on {
-            StartSSLocal()
             ReloadConfSSLocal()
         }
     } else {
