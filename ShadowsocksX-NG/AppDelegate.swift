@@ -191,7 +191,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
         }
         
         notifyCenter.addObserver(forName: NOTIFY_TIME_INTERAVAL_SUBSCRIBE_CHANGED, object: nil, queue: nil) { (note: Notification) in
-            self.timingUpdateSubscribes()
+            self.timingUpdateSubscribes(reset: (note.object) as? Bool ?? true)
         }
         
         DispatchQueue.global().async {
@@ -244,7 +244,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
         }
     }
     
-    private func timingUpdateSubscribes() {
+    private func timingUpdateSubscribes(reset: Bool=true) {
+        if autoUpdateSubscribesTimer != nil && !reset {
+            return
+        }
+        
         let defaults = UserDefaults.standard
         let instance = SubscribeManager.instance
         var hasAutoUpdateEnabledSubscribe = false
@@ -259,10 +263,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
         let enable = defaults.bool(forKey: "TimeInteraval.SubscribeUpdateEnable") && hasAutoUpdateEnabledSubscribe
         
         if enable {
-            if autoUpdateSubscribesTimer != nil {
-                autoUpdateSubscribesTimer?.invalidate()
-            }
-            
+            autoUpdateSubscribesTimer?.invalidate()
             autoUpdateSubscribesTimer = Timer.scheduledTimer(withTimeInterval: TimeInterval(defaults.integer(forKey: "TimeInteraval.SubscribeUpdateTime") * 3600), repeats: true) { timer in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     instance.updateAllServerFromSubscribe(auto: true, inform: false, ping: true)

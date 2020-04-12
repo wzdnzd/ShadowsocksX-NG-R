@@ -61,7 +61,7 @@ class SubscribePreferenceWindowController: NSWindowController
         }
         
         sbMgr.save()
-        NotificationCenter.default.post(name: NOTIFY_TIME_INTERAVAL_SUBSCRIBE_CHANGED, object: nil)
+        NotificationCenter.default.post(name: NOTIFY_TIME_INTERAVAL_SUBSCRIBE_CHANGED, object: false)
         window?.performClose(self)
     }
     
