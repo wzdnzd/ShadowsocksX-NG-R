@@ -282,6 +282,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
         if isOn {
             StartSSLocal()
             StartPrivoxy()
+            
+            if !defaults.bool(forKey: "AutoConfigureNetworkServices") {
+                return
+            }
+            
             if mode == "auto" {
                 ProxyConfHelper.disableProxy("hi")
                 ProxyConfHelper.enablePACProxy("hi")

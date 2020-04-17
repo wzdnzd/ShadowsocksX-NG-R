@@ -37,6 +37,10 @@ class ProxyPreferencesController: NSWindowController, NSWindowDelegate, NSTableV
         tableVIew.reloadData()
     }
     
+    @IBAction func onAutoConfig(_ sender: NSButton) {
+        self.autoConfigureNetworkServices = sender.state == .off ? false : true
+    }
+    
     @IBAction func ok(_ sender: NSButton){
         ProxyConfHelper.disableProxy("hi")
         
