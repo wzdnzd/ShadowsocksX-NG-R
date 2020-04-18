@@ -9,8 +9,6 @@
 
 - 下载地址：[releases](https://github.com/wzdnzd/ShadowsocksX-NG-R/releases)
   
-> 推荐使用由[@paradiseduo](https://github.com/paradiseduo/ShadowsocksX-NG-R8)维护的版本，作者更新挺频繁！本[repo](https://github.com/wzdnzd/ShadowsocksX-NG-R)纯属只是为了个人特殊需求
-
 
 ## 软件删除方法
 首先从应用程序中将.app文件放到废纸篓（随便什么方式）
@@ -29,19 +27,7 @@ rm -rf ~/.ShadowsocksX-NG
 
 [![Build Status](https://travis-ci.org/shadowsocksr/ShadowsocksX-NG.svg?branches=develop)](https://travis-ci.org/shadowsocksr/ShadowsocksX-NG)
 
-Next Generation of [ShadowsocksX](https://github.com/shadowsocks/shadowsocks-iOS) with SSR support.
-
-**After Download Please check the GPG signature!**
-
-First get [My pub key](https://github.com/qinyuhang/Pubkey) and [import the Pub key]()
-
-`gpg --import pubkeys.txt`
-
-Then [verify the signature](http://stackoverflow.com/questions/19011093/how-do-i-verify-a-gpg-signature-matches-a-public-key-file)
-
-Place the `.dmg` and `.dmg.sig` file together in a directory
-
-`gpg --verify {drag the ShadowsocksX-NG-R8.dmg.sig into your terminal}`
+[ShadowsocksX-NG](https://github.com/shadowsocks/ShadowsocksX-NG) with SSR support.
 
 ## Why?
 
@@ -104,16 +90,6 @@ Contributions must be available on a separately named branch based on the latest
 
 ref: [GitFlow](http://nvie.com/posts/a-successful-git-branching-model/)
 
-## TODO List
-
-- [x] Embed the http proxy server [privoxy](http://www.privoxy.org/), [get it](https://homebrew.bintray.com/bottles/privoxy-3.0.26.sierra.bottle.tar.gz).
-
-
-- [x] ACL mode support [Shadowsocks ACL](https://github.com/shadowsocksr/shadowsocksr-libev/tree/master/acl)
-
-## Know Issue
-Solved [Issue 1.]() Auto PAC & White list is not working on macOS 10.12 Serria because system proxy not allow [file:///](file:///) protocol.
-[Issue 2.]() The net speed is how ever have some problem with macOS 10.12, welcome logs from all users.
 
 ## License
 

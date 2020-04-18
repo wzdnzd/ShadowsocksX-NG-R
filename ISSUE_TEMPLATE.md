@@ -1,7 +1,7 @@
 **System and Shadowsocksx-NG-R8 version:**
 
-- macOS 10.12.4 beta (16E144f)
-- Shadowsocksx-NG-R8 1.3.9-build4
+- macOS 10.15.4 (19E287)
+- Shadowsocksx-NG-R8 1.5.0-build7
 
 **Expected behavior:**
 

@@ -143,7 +143,6 @@ int main(int argc, const char * argv[])
                                       , key, kSCEntNetProxies];
                 
                 if ([mode isEqualToString:@"auto"]) {
-                    
                     [proxies setObject:pacURL forKey:(NSString *)kCFNetworkProxiesProxyAutoConfigURLString];
                     [proxies setObject:[NSNumber numberWithInt:1] forKey:(NSString *)kCFNetworkProxiesProxyAutoConfigEnable];
                     
@@ -181,9 +180,7 @@ int main(int argc, const char * argv[])
                 } else if ([mode isEqualToString:@"off"]) {
                     if (pacURL != nil && portString != nil) {
                         // 取原来的配置，判断是否为shadowsocksX-NG设置的
-                        NSDictionary* oldProxies
-                            = (__bridge NSDictionary*)SCPreferencesPathGetValue(prefRef
-                                                                                , (__bridge CFStringRef)prefPath);
+                        NSDictionary* oldProxies = (__bridge NSDictionary*)SCPreferencesPathGetValue(prefRef, (__bridge CFStringRef)prefPath);
                         
                         if (([oldProxies[(NSString *)kCFNetworkProxiesProxyAutoConfigURLString] containsString:pacURL]
                              &&[oldProxies[(NSString *)kCFNetworkProxiesProxyAutoConfigEnable] isEqual:[NSNumber numberWithInt:1]])
