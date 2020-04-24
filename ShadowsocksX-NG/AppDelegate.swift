@@ -194,7 +194,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
             self.timingUpdateSubscribes(reset: (note.object) as? Bool ?? true)
         }
         
-        DispatchQueue.global().async {
+        DispatchQueue.global().asyncAfter(deadline: DispatchTime.now()+2) {
             // Version Check!
             if defaults.bool(forKey: "AutoCheckUpdate") {
                 self.checkForUpdate(mustShowAlert: false)

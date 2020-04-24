@@ -83,7 +83,7 @@ func GeneratePACFile() -> Bool {
     if !fileMgr.fileExists(atPath: ACLBackCHNFilePath) {
         let src = Bundle.main.path(forResource: "backchn", ofType: "acl")
         try! fileMgr.copyItem(atPath: src!, toPath: ACLBackCHNFilePath)
-        
+
     }
     // If chn.acl
     if !fileMgr.fileExists(atPath: ACLGFWListFilePath) {
@@ -199,7 +199,7 @@ func UpdatePACFromGFWList() {
                 notification.title = "Failed to download latest GFW List.".localized
                 NSUserNotificationCenter.default.deliver(notification)
             }
-    }
+        }
 }
 func ACLFromUserRule(userRuleLines:[String]){
     do {
@@ -221,7 +221,7 @@ func ACLFromUserRule(userRuleLines:[String]){
                 let str = s.replacingOccurrences(of: "@@", with: "").components(separatedBy: ".").joined(separator:"\\.").replacingOccurrences(of: "*\\.", with: "^(.*\\.)?")
                 if (!WhiteACL.contains(str)){
                     WhiteACL += (str + "$\n")
-                    
+
                 }
             }
             if (s.hasPrefix("||")){
@@ -248,46 +248,82 @@ func UpdateACL(){
         } catch {
         }
     }
-    
-    let url = UserDefaults.standard.string(forKey: "ACLWhiteListURL")
-    AF.request(url!)// request(.GET, url!)
-        .responseString {
-            response in
-            do {
-                let value = try response.result.get()
-                try value.write(toFile: ACLWhiteListFilePath, atomically: true, encoding: String.Encoding.utf8)
-                if GeneratePACFile() {
+    let timeout = DispatchTime.now()+2
+    let queue = DispatchQueue(label: "UpdateALCLists")
+    let group = DispatchGroup()
+    queue.async(group: group, qos: .default) {
+        if let url = UserDefaults.standard.string(forKey: "ACLWhiteListURL") {
+            group.enter()
+            AF.request(url).responseString { response in
+                do {
+                    let value = try response.result.get()
+                    try value.write(toFile: ACLWhiteListFilePath, atomically: true, encoding: String.Encoding.utf8)
+                    if GeneratePACFile() {
+                        // Popup a user notification
+                        let notification = NSUserNotification()
+                        notification.title = "White List update succeed.".localized
+                        NSUserNotificationCenter.default.deliver(notification)
+                    }
+                    group.leave()
+                } catch {
                     // Popup a user notification
                     let notification = NSUserNotification()
-                    notification.title = "White List update succeed.".localized
+                    notification.title = "Failed to download latest White List update succeed.".localized
                     NSUserNotificationCenter.default.deliver(notification)
+                    group.leave()
                 }
-            } catch {
-                // Popup a user notification
-                let notification = NSUserNotification()
-                notification.title = "Failed to download latest White List update succeed.".localized
-                NSUserNotificationCenter.default.deliver(notification)
             }
+            let _ = group.wait(timeout: timeout)
+        }
     }
-    
-    let IPURL = UserDefaults.standard.string(forKey: "ACLAutoListURL")
-    AF.request(IPURL!)
-        .responseString {
-            response in
-            do {
-                let value = try response.result.get()
-                try value.write(toFile: ACLGFWListFilePath, atomically: true, encoding: String.Encoding.utf8)
-                if GeneratePACFile() {
+    queue.async(group: group, qos: .default) {
+        if let IPURL = UserDefaults.standard.string(forKey: "ACLAutoListURL") {
+            group.enter()
+            AF.request(IPURL).responseString { response in
+                do {
+                    let value = try response.result.get()
+                    try value.write(toFile: ACLGFWListFilePath, atomically: true, encoding: String.Encoding.utf8)
+                    if GeneratePACFile() {
+                        // Popup a user notification
+                        let notification = NSUserNotification()
+                        notification.title = "Black List update succeed.".localized
+                        NSUserNotificationCenter.default.deliver(notification)
+                    }
+                    group.leave()
+                } catch {
                     // Popup a user notification
                     let notification = NSUserNotification()
-                    notification.title = "White List update succeed.".localized
+                    notification.title = "Failed to download latest Black List update succeed.".localized
                     NSUserNotificationCenter.default.deliver(notification)
+                    group.leave()
                 }
-            } catch {
-                // Popup a user notification
-                let notification = NSUserNotification()
-                notification.title = "Failed to download latest White List update succeed.".localized
-                NSUserNotificationCenter.default.deliver(notification)
             }
+            let _ = group.wait(timeout: timeout)
+        }
+    }
+    queue.async(group: group, qos: .default) {
+        if let backURL = UserDefaults.standard.string(forKey: "ACLProxyBackCHNURL") {
+            group.enter()
+            AF.request(backURL).responseString { response in
+                do {
+                    let value = try response.result.get()
+                    try value.write(toFile: ACLBackCHNFilePath, atomically: true, encoding: String.Encoding.utf8)
+                    if GeneratePACFile() {
+                        // Popup a user notification
+                        let notification = NSUserNotification()
+                        notification.title = "BackCHN List update succeed.".localized
+                        NSUserNotificationCenter.default.deliver(notification)
+                    }
+                    group.leave()
+                }catch {
+                    // Popup a user notification
+                    let notification = NSUserNotification()
+                    notification.title = "Failed to download latest BackCHN List update succeed.".localized
+                    NSUserNotificationCenter.default.deliver(notification)
+                    group.leave()
+                }
+            }
+            let _ = group.wait(timeout: timeout)
+        }
     }
 }
