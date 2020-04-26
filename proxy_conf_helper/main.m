@@ -10,7 +10,7 @@
 
 #import <Foundation/Foundation.h>
 #import <SystemConfiguration/SystemConfiguration.h>
-#import "../ShadowsocksX-NG/proxy_conf_helper_version.h"
+#import "../ShadowsocksX-NG/ProxyConfHelperVersion.h"
 
 // A library for parsing command line.
 // https://github.com/stephencelis/BRLOptionParser

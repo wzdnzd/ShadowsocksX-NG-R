@@ -1,4 +1,4 @@
-**System and Shadowsocksx-NG-R8 version:**
+**System and Shadowsocksx-NG-R version:**
 
 - macOS 10.15.4 (19E287)
 - Shadowsocksx-NG-R8 1.5.0-build7
@@ -23,12 +23,12 @@
 
 Please upload the ss-local.log file here the file is in `~/Library/Logs`
 1) Open 'Advanced Settings -> enable Verbose Mode'
-2) Continue run `Shadowsocksx-NG-R8` for 5 minutes
+2) Continue run `Shadowsocksx-NG-R` for 5 minutes
 3) Upload the `~/Library/Logs/ss-local.log` here (with or without compress)
 
 **Application log**
 
-Open the `Console.app` and search `Shadowsocksx-NG`
+Open the `Console.app` and search `Shadowsocksx-NG-R8`
 Copy paste the log here
 
 **Crash Log**

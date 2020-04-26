@@ -142,9 +142,10 @@ class PreferencesWindowController: NSWindowController
         self.profilesTableView.selectRowIndexes(IndexSet(integer: index-1), byExtendingSelection: false)
         updateProfileBoxVisible()
         if profileMgr.profiles.count == 0 {
-            defaults.set(true, forKey: "ShadowsocksOn")
+            //调用开关按钮自动翻转状态，因此这里传true
+            defaults.set(true, forKey: USERDEFAULTS_SHADOWSOCKS_ON)
             defaults.synchronize()
-            (NSApplication.shared.delegate as! AppDelegate).toggleRunning((NSApplication.shared.delegate as! AppDelegate).toggleRunningMenuItem)
+            NotificationCenter.default.post(name: NOTIFY_TOGGLE_RUNNING, object: nil)
         }
     }
     
@@ -198,7 +199,7 @@ class PreferencesWindowController: NSWindowController
         let index = profilesTableView.selectedRow
         if  index >= 0 {
             let profile = profileMgr.profiles[index]
-            let ssURL = profile.URL()
+            let ssURL = profile.getSSRURL()
             if let url = ssURL {
                 
                 let pboard = NSPasteboard.general

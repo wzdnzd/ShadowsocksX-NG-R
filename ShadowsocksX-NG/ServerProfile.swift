@@ -25,7 +25,7 @@ import Cocoa
     var ssrObfsParam:String = ""
     var ssrGroup: String = ""
     
-    var latency:String?
+    var latency = NSNumber(value: Double.infinity)
     
     override init() {
         uuid = UUID().uuidString
@@ -101,9 +101,9 @@ import Cocoa
                                          "method": method as AnyObject,]
         
         let defaults = UserDefaults.standard
-        conf["local_port"] = NSNumber(value: UInt16(defaults.integer(forKey: "LocalSocks5.ListenPort")) as UInt16)
-        conf["local_address"] = defaults.string(forKey: "LocalSocks5.ListenAddress") as AnyObject?
-        conf["timeout"] = NSNumber(value: UInt32(defaults.integer(forKey: "LocalSocks5.Timeout")) as UInt32)
+        conf["local_port"] = NSNumber(value: UInt16(defaults.integer(forKey: USERDEFAULTS_LOCAL_SOCKS5_LISTEN_PORT)) as UInt16)
+        conf["local_address"] = defaults.string(forKey: USERDEFAULTS_LOCAL_SOCKS5_LISTEN_ADDRESS) as AnyObject?
+        conf["timeout"] = NSNumber(value: UInt32(defaults.integer(forKey: USERDEFAULTS_LOCAL_SOCKS5_TIMEOUT)) as UInt32)
         
         if(!ssrObfs.isEmpty){
             conf["protocol"] = ssrProtocol as AnyObject?
@@ -178,24 +178,11 @@ import Cocoa
         return true
     }
     
-    // 我也不会啊，下面的 URL 加参数默认值好像不起作用，只能重新创建一个，非常糟糕
-    // 为了在控件只显示 SSR url 而不是 ss url
     func ssrURL() -> Foundation.URL? {
-        let firstParts = "\(serverHost):\(serverPort):\(ssrProtocol):\(method):\(ssrObfs):"
-        let secondParts = "\(password)"
-        // ssr:// + base64(abc.xyz:12345:auth_sha1_v2:rc4-md5:tls1.2_ticket_auth:{base64(password)}/?obfsparam={base64(混淆参数(网址))}&protoparam={base64(混淆协议)}&remarks={base64(节点名称)}&group={base64(分组名)})
-        let base64PasswordString = encode64(secondParts)
-        let base64ssrObfsParamString = encode64(ssrObfsParam)
-        let base64ssrProtocolParamString = encode64(ssrProtocolParam)
-        let base64RemarkString = encode64(remark)
-        let base64GroupString = encode64(ssrGroup)
-        
-        var s = firstParts + base64PasswordString! + "/?" + "obfsparam=" + base64ssrObfsParamString! + "&protoparam=" + base64ssrProtocolParamString! + "&remarks=" + base64RemarkString! + "&group=" + base64GroupString!
-        s = encode64(s)
-        return Foundation.URL(string: "ssr://\(s)")
+        return self.getSSRURL()
     }
-    
-    func URL(ssr: Bool = false) -> Foundation.URL? {
+
+    func getSSRURL() -> URL? {
         if(ssrObfs=="plain"){
             let parts = "\(method):\(password)@\(serverHost):\(serverPort)"
             let base64String = parts.data(using: String.Encoding.utf8)?
@@ -205,7 +192,18 @@ import Cocoa
                 return Foundation.URL(string: "ss://\(s)")
             }
         }else{
-            return self.ssrURL()
+            let firstParts = "\(serverHost):\(serverPort):\(ssrProtocol):\(method):\(ssrObfs):"
+            let secondParts = "\(password)"
+            // ssr:// + base64(abc.xyz:12345:auth_sha1_v2:rc4-md5:tls1.2_ticket_auth:{base64(password)}/?obfsparam={base64(混淆参数(网址))}&protoparam={base64(混淆协议)}&remarks={base64(节点名称)}&group={base64(分组名)})
+            let base64PasswordString = encode64(secondParts)
+            let base64ssrObfsParamString = encode64(ssrObfsParam)
+            let base64ssrProtocolParamString = encode64(ssrProtocolParam)
+            let base64RemarkString = encode64(remark)
+            let base64GroupString = encode64(ssrGroup)
+
+            var s = firstParts + base64PasswordString! + "/?" + "obfsparam=" + base64ssrObfsParamString! + "&protoparam=" + base64ssrProtocolParamString! + "&remarks=" + base64RemarkString! + "&group=" + base64GroupString!
+            s = encode64(s)
+            return URL(string: "ssr://\(s)")
         }
         return nil
     }
@@ -216,5 +214,15 @@ import Cocoa
         } else {
             return "\(remark) (\(serverHost):\(serverPort))"
         }
+    }
+}
+
+extension NumberFormatter {
+    static func three(_ number: NSNumber) -> String {
+        let nf = NumberFormatter()
+        nf.numberStyle = .decimal
+        nf.maximumFractionDigits = 3
+        
+        return nf.string(from: number) ?? "failed"
     }
 }

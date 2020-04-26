@@ -9,7 +9,6 @@
 
 - 下载地址：[releases](https://github.com/wzdnzd/ShadowsocksX-NG-R/releases)
   
-
 ## 软件删除方法
 首先从应用程序中将.app文件放到废纸篓（随便什么方式）
 然后打开命令行，依次输入：
@@ -19,6 +18,8 @@ rm -rf ~/Library/Application\ Support/ShadowsocksX-NG-R8
 rm -rf ~/Library/LaunchAgents/com.qiuyuzhou.shadowsocksX-NG.http.plist
 rm -rf ~/Library/LaunchAgents/com.qiuyuzhou.shadowsocksX-NG.local.plist
 rm -rf ~/.ShadowsocksX-NG
+rm -rf ~/Library/Preferences/com.qiuyuzhou.ShadowsocksX-NG.plist
+rm -rf ~/Library/Caches/com.qiuyuzhou.ShadowsocksX-NG
 ```
 如果提示权限不足，请sudo后执行
 
@@ -26,6 +27,9 @@ rm -rf ~/.ShadowsocksX-NG
 # ShadowsocksX-NG-R
 
 [![Build Status](https://travis-ci.org/shadowsocksr/ShadowsocksX-NG.svg?branches=develop)](https://travis-ci.org/shadowsocksr/ShadowsocksX-NG)
+[![Swift](https://img.shields.io/badge/swift-5.2-orange.svg)](https://www.python.org/downloads/)
+[![platform](https://img.shields.io/badge/platform-macOS-green.svg)](https://github.com/MobSF/Mobile-Security-Framework-MobSF/)
+[![License](https://img.shields.io/:license-GPL--3.0--only-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.html)
 
 [ShadowsocksX-NG](https://github.com/shadowsocks/ShadowsocksX-NG) with SSR support.
 
@@ -47,7 +51,7 @@ Then I rewrite the GUI code by swift.
 
 ### Building
 
-- Xcode 11.4+
+- Xcode 11.4.1+
 - cocoapod 1.8.4+
 
 ## Fetures

@@ -122,7 +122,7 @@ import Alamofire
                 print("")
             }
         }
-        return Subscribe.init(initUrlString: feed, initGroupName: group, initToken: token, initFilter: filter, initMaxCount: maxCount,initActive: isActive,initAutoUpdate: autoUpdateEnable)
+        return Subscribe(initUrlString: feed, initGroupName: group, initToken: token, initFilter: filter, initMaxCount: maxCount,initActive: isActive,initAutoUpdate: autoUpdateEnable)
     }
     static func toDictionary(_ data: Subscribe) -> [String: AnyObject] {
         var ret : [String: AnyObject] = [:]
@@ -252,8 +252,9 @@ import Alamofire
             }
             
             self.profileMgr.save()
-            (NSApplication.shared.delegate as! AppDelegate).updateServersMenu()
-            (NSApplication.shared.delegate as! AppDelegate).updateRunningModeMenu()
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(name: NOTIFY_UPDATE_MAINMENU, object: nil)
+            }
         }
         
         if !isActive && !delete { return }

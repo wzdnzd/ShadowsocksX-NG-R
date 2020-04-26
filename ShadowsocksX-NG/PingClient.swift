@@ -91,7 +91,7 @@ class PingServers:NSObject{
             queue.async {
                 if let outputString = self.runCommand(cmd: "/sbin/ping", args: "-c","5","-t","2",SerMgr.profiles[i].serverHost).output.last {
                     if let latency = self.getlatencyFromString(result: outputString) {
-                        SerMgr.profiles[i].latency = String(latency)
+                        SerMgr.profiles[i].latency = NSNumber(value: latency)
                     }
                 }
                 group.leave()
@@ -102,11 +102,10 @@ class PingServers:NSObject{
             var fastestSpeed = Double.infinity
             
             for k in 0..<SerMgr.profiles.count {
-                if let late = SerMgr.profiles[k].latency{
-                    if let latency = Double(late), latency < fastestSpeed {
-                        fastestSpeed = latency
-                        fastestId = k
-                    }
+                let latency = SerMgr.profiles[k].latency.doubleValue
+                if latency < fastestSpeed {
+                    fastestSpeed = latency
+                    fastestId = k
                 }
             }
             ConnectTestigManager.sync(SerMgr: SerMgr, fastestId: fastestId, fastestSpeed: fastestSpeed, title: "ICMP测试完成！最快", inform: inform)
@@ -119,7 +118,7 @@ class ConnectTestigManager {
         if !isTesting {
             isTesting = true
             
-            if UserDefaults.standard.bool(forKey: "TCP") {
+            if UserDefaults.standard.bool(forKey: USERDEFAULTS_TCP) {
                 Tcping.instance.ping(inform: inform)
             } else {
                 PingServers.instance.ping(inform: inform)
@@ -138,26 +137,31 @@ class ConnectTestigManager {
                 && !fastestProfile.isSame(profile: ServerProfileManager.instance.getActiveProfile() ?? fastestProfile) {
                 ServerProfileManager.instance.setActiveProfiledId(fastestProfile.uuid)
                 if writeSSLocalConfFile(fastestProfile.toJsonConfig()) {
-                    ReloadConfSSLocal()
+                    ReloadConfSSLocal { (suc) in
+                        if !suc {
+                            NSLog("SSLocal reload failed.")
+                        }
+                    }
                 }
             }
         }
         
+        let delay = NumberFormatter.three(SerMgr.profiles[fastestId].latency)
+        
         if inform {
             let notice = NSUserNotification()
-            notice.title = "\(title)\(SerMgr.profiles[fastestId].latency!)ms"
+            notice.title = "\(title)\(delay)ms"
             notice.subtitle = "最快的是\(SerMgr.profiles[fastestId].serverHost) \(SerMgr.profiles[fastestId].remark)"
             
             NSUserNotificationCenter.default.deliver(notice)
         }
         
-        UserDefaults.standard.setValue("\(SerMgr.profiles[fastestId].latency!)", forKey: "FastestNode")
+        UserDefaults.standard.setValue("\(delay)", forKey: USERDEFAULTS_FASTEST_NODE)
         UserDefaults.standard.synchronize()
         
         DispatchQueue.main.async {
             isTesting = false
-            (NSApplication.shared.delegate as! AppDelegate).updateServersMenu()
-            (NSApplication.shared.delegate as! AppDelegate).updateRunningModeMenu()
+            NotificationCenter.default.post(name: NOTIFY_UPDATE_MAINMENU, object: nil)
         }
     }
 }

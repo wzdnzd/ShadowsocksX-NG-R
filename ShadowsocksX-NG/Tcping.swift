@@ -136,7 +136,7 @@ class Tcping {
                 for i in 0..<SerMgr.profiles.count {
                     let speed = w.speedStringDomain[SerMgr.profiles[i].serverHost]!.averageSpeed()
                     if speed.doubleValue != Double.infinity {
-                        SerMgr.profiles[i].latency = nf.string(from: speed)
+                        SerMgr.profiles[i].latency = speed
                     }
                     if speed.doubleValue < fastestSpeed {
                         fastestSpeed = speed.doubleValue

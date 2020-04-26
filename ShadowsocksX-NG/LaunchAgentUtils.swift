@@ -47,9 +47,9 @@ func generateSSLocalLauchAgentPlist() -> Bool {
     let oldSha1Sum = getFileSHA1Sum(plistFilepath)
     
     let defaults = UserDefaults.standard
-    let enableUdpRelay = defaults.bool(forKey: "LocalSocks5.EnableUDPRelay")
-    let enableVerboseMode = defaults.bool(forKey: "LocalSocks5.EnableVerboseMode")
-    let enabelWhiteListMode = defaults.string(forKey: "ShadowsocksRunningMode")
+    let enableUdpRelay = defaults.bool(forKey: USERDEFAULTS_LOCAL_SOCKS5_ENABLE_UDP_RELAY)
+    let enableVerboseMode = defaults.bool(forKey: USERDEFAULTS_LOCAL_SOCKS5_ENABLE_VERBOSE_MODE)
+    let enabelWhiteListMode = defaults.string(forKey: USERDEFAULTS_SHADOWSOCKS_RUNNING_MODE)
     
     var arguments = [sslocalPath, "-c", "ss-local-config.json", "--fast-open"]
     if enableUdpRelay {
@@ -59,7 +59,7 @@ func generateSSLocalLauchAgentPlist() -> Bool {
         arguments.append("-v")
     }
     if enabelWhiteListMode == "whiteList" {
-        ACLFileName = defaults.string(forKey: "ACLFileName")!
+        ACLFileName = defaults.string(forKey: USERDEFAULTS_ACL_FILE_NAME)!
         let ACLPath = NSHomeDirectory() + "/.ShadowsocksX-NG/" + ACLFileName
         arguments.append("--acl")
         arguments.append(ACLPath)
@@ -84,43 +84,61 @@ func generateSSLocalLauchAgentPlist() -> Bool {
     }
 }
 
-func ReloadConfSSLocal() {
+func ReloadConfSSLocal(finish: @escaping(_ success: Bool)->()) {
     let bundle = Bundle.main
     let installerPath = bundle.path(forResource: "reload_conf_ss_local.sh", ofType: nil)
     let task = Process.launchedProcess(launchPath: installerPath!, arguments: [""])
     task.waitUntilExit()
     if task.terminationStatus == 0 {
         NSLog("Start ss-local succeeded.")
+        DispatchQueue.main.async {
+            finish(true)
+        }
     } else {
         NSLog("Start ss-local failed.")
+        DispatchQueue.main.async {
+            finish(false)
+        }
     }
 }
 
-func StartSSLocal() {
+func StartSSLocal(finish: @escaping(_ success: Bool)->()) {
     let bundle = Bundle.main
     let installerPath = bundle.path(forResource: "start_ss_local.sh", ofType: nil)
     let task = Process.launchedProcess(launchPath: installerPath!, arguments: [""])
     task.waitUntilExit()
     if task.terminationStatus == 0 {
         NSLog("Start ss-local succeeded.")
+        DispatchQueue.main.async {
+            finish(true)
+        }
     } else {
         NSLog("Start ss-local failed.")
+        DispatchQueue.main.async {
+            finish(false)
+        }
     }
 }
 
-func StopSSLocal() {
+func StopSSLocal(finish: @escaping(_ success: Bool)->()) {
     let bundle = Bundle.main
     let installerPath = bundle.path(forResource: "stop_ss_local.sh", ofType: nil)
     let task = Process.launchedProcess(launchPath: installerPath!, arguments: [""])
     task.waitUntilExit()
     if task.terminationStatus == 0 {
         NSLog("Stop ss-local succeeded.")
+        DispatchQueue.main.async {
+            finish(true)
+        }
     } else {
         NSLog("Stop ss-local failed.")
+        DispatchQueue.main.async {
+            finish(false)
+        }
     }
 }
 
-func InstallSSLocal() {
+func InstallSSLocal(finish: @escaping(_ success: Bool)->()) {
     let fileMgr = FileManager.default
     let homeDir = NSHomeDirectory()
     let appSupportDir = homeDir+APP_SUPPORT_DIR
@@ -132,21 +150,35 @@ func InstallSSLocal() {
         task.waitUntilExit()
         if task.terminationStatus == 0 {
             NSLog("Install ss-local succeeded.")
+            DispatchQueue.main.async {
+                finish(true)
+            }
         } else {
             NSLog("Install ss-local failed.")
+            DispatchQueue.main.async {
+                finish(false)
+            }
         }
+    } else {
+        finish(true)
     }
 }
 
-func RemoveSSLocal() {
+func RemoveSSLocal(finish: @escaping(_ success: Bool)->()) {
     let bundle = Bundle.main
     let installerPath = bundle.path(forResource: "remove_ss_local.sh", ofType: nil)
     let task = Process.launchedProcess(launchPath: installerPath!, arguments: [""])
     task.waitUntilExit()
     if task.terminationStatus == 0 {
         NSLog("Remove ss-local succeeded.")
+        DispatchQueue.main.async {
+            finish(true)
+        }
     } else {
         NSLog("Remove ss-local failed.")
+        DispatchQueue.main.async {
+            finish(false)
+        }
     }
 }
 
@@ -181,7 +213,13 @@ func removeSSLocalConfFile() {
     }
 }
 
-func SyncSSLocal() {
+func SyncSSLocal(finish: @escaping(_ success: Bool)->()) {
+    func Sync(_ suc: Bool){
+        SyncPrivoxy {
+            SyncPac()
+            finish(suc)
+        }
+    }
     var changed: Bool = false
     changed = changed || generateSSLocalLauchAgentPlist()
     let mgr = ServerProfileManager.instance
@@ -189,16 +227,25 @@ func SyncSSLocal() {
         if mgr.getActiveProfile() != nil {
             changed = changed || writeSSLocalConfFile((mgr.getActiveProfile()?.toJsonConfig())!)
         }
-        let on = UserDefaults.standard.bool(forKey: "ShadowsocksOn")
-        if on {
-            ReloadConfSSLocal()
+        if UserDefaults.standard.bool(forKey: USERDEFAULTS_SHADOWSOCKS_ON) {
+            StartSSLocal { (s) in
+                if s {
+                    ReloadConfSSLocal { (suc) in
+                        Sync(suc)
+                    }
+                } else {
+                    Sync(false)
+                }
+            }
+        } else {
+            Sync(true)
         }
     } else {
-        removeSSLocalConfFile()
-        StopSSLocal()
+        StopSSLocal { (s) in
+            removeSSLocalConfFile()
+            Sync(true)
+        }
     }
-    SyncPac()
-    SyncPrivoxy()
 }
 
 //  MARK: privoxy
@@ -239,43 +286,61 @@ func generatePrivoxyLauchAgentPlist() -> Bool {
 }
 
 
-func ReloadConfPrivoxy() {
+func ReloadConfPrivoxy(finish: @escaping(_ success: Bool)->()) {
     let bundle = Bundle.main
     let installerPath = bundle.path(forResource: "reload_conf_privoxy.sh", ofType: nil)
     let task = Process.launchedProcess(launchPath: installerPath!, arguments: [""])
     task.waitUntilExit()
     if task.terminationStatus == 0 {
         NSLog("reload privoxy succeeded.")
+        DispatchQueue.main.async {
+            finish(true)
+        }
     } else {
         NSLog("reload privoxy failed.")
+        DispatchQueue.main.async {
+            finish(false)
+        }
     }
 }
 
-func StartPrivoxy() {
+func StartPrivoxy(finish: @escaping(_ success: Bool)->()) {
     let bundle = Bundle.main
     let installerPath = bundle.path(forResource: "start_privoxy.sh", ofType: nil)
     let task = Process.launchedProcess(launchPath: installerPath!, arguments: [""])
     task.waitUntilExit()
     if task.terminationStatus == 0 {
         NSLog("Start privoxy succeeded.")
+        DispatchQueue.main.async {
+            finish(true)
+        }
     } else {
         NSLog("Start privoxy failed.")
+        DispatchQueue.main.async {
+            finish(false)
+        }
     }
 }
 
-func StopPrivoxy() {
+func StopPrivoxy(finish: @escaping(_ success: Bool)->()) {
     let bundle = Bundle.main
     let installerPath = bundle.path(forResource: "stop_privoxy.sh", ofType: nil)
     let task = Process.launchedProcess(launchPath: installerPath!, arguments: [""])
     task.waitUntilExit()
     if task.terminationStatus == 0 {
         NSLog("Stop privoxy succeeded.")
+        DispatchQueue.main.async {
+            finish(true)
+        }
     } else {
         NSLog("Stop privoxy failed.")
+        DispatchQueue.main.async {
+            finish(false)
+        }
     }
 }
 
-func InstallPrivoxy() {
+func InstallPrivoxy(finish: @escaping(_ success: Bool)->()) {
     let fileMgr = FileManager.default
     let homeDir = NSHomeDirectory()
     let appSupportDir = homeDir+APP_SUPPORT_DIR
@@ -287,21 +352,35 @@ func InstallPrivoxy() {
         task.waitUntilExit()
         if task.terminationStatus == 0 {
             NSLog("Install privoxy succeeded.")
+            DispatchQueue.main.async {
+                finish(true)
+            }
         } else {
             NSLog("Install privoxy failed.")
+            DispatchQueue.main.async {
+                finish(false)
+            }
         }
+    } else {
+        finish(true)
     }
 }
 
-func RemovePrivoxy() {
+func RemovePrivoxy(finish: @escaping(_ success: Bool)->()) {
     let bundle = Bundle.main
     let installerPath = bundle.path(forResource: "remove_privoxy.sh", ofType: nil)
     let task = Process.launchedProcess(launchPath: installerPath!, arguments: [""])
     task.waitUntilExit()
     if task.terminationStatus == 0 {
         NSLog("Remove privoxy succeeded.")
+        DispatchQueue.main.async {
+            finish(true)
+        }
     } else {
         NSLog("Remove privoxy failed.")
+        DispatchQueue.main.async {
+            finish(false)
+        }
     }
 }
 
@@ -311,8 +390,8 @@ func writePrivoxyConfFile() -> Bool {
         let bundle = Bundle.main
         let examplePath = bundle.path(forResource: "privoxy.config.example", ofType: nil)
         var example = try String(contentsOfFile: examplePath!, encoding: .utf8)
-        example = example.replacingOccurrences(of: "{http}", with: defaults.string(forKey: "LocalHTTP.ListenAddress")! + ":" + String(defaults.integer(forKey: "LocalHTTP.ListenPort")))
-        example = example.replacingOccurrences(of: "{socks5}", with: defaults.string(forKey: "LocalSocks5.ListenAddress")! + ":" + String(defaults.integer(forKey: "LocalSocks5.ListenPort")))
+        example = example.replacingOccurrences(of: "{http}", with: defaults.string(forKey: USERDEFAULTS_LOCAL_HTTP_LISTEN_ADDRESS)! + ":" + String(defaults.integer(forKey: USERDEFAULTS_LOCAL_HTTP_LISTEN_PORT)))
+        example = example.replacingOccurrences(of: "{socks5}", with: defaults.string(forKey: USERDEFAULTS_LOCAL_SOCKS5_LISTEN_ADDRESS)! + ":" + String(defaults.integer(forKey: USERDEFAULTS_LOCAL_SOCKS5_LISTEN_PORT)))
         let data = example.data(using: .utf8)
         
         let filepath = NSHomeDirectory() + APP_SUPPORT_DIR + "privoxy.config"
@@ -341,19 +420,23 @@ func removePrivoxyConfFile() {
     }
 }
 
-func SyncPrivoxy() {
+func SyncPrivoxy(finish: @escaping()->()) {
     var changed: Bool = false
     changed = changed || generatePrivoxyLauchAgentPlist()
     let mgr = ServerProfileManager.instance
     if mgr.getActiveProfileId() != "" {
         changed = changed || writePrivoxyConfFile()
         
-        let on = UserDefaults.standard.bool(forKey: "LocalHTTPOn")
+        let on = UserDefaults.standard.bool(forKey: USERDEFAULTS_LOCAL_HTTP_ON)
         if on {
-            ReloadConfPrivoxy()
+            ReloadConfPrivoxy { (success) in
+                finish()
+            }
         } else {
-            removePrivoxyConfFile()
-            StopPrivoxy()
+            StopPrivoxy { (success) in
+                removePrivoxyConfFile()
+                finish()
+            }
         }
     }
 }

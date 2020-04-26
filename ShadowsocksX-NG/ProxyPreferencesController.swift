@@ -22,10 +22,10 @@ class ProxyPreferencesController: NSWindowController, NSWindowDelegate, NSTableV
         
         // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
         let defaults = UserDefaults.standard
-        self.autoConfigCheckBox.state = NSControl.StateValue(rawValue: NSNumber(value: defaults.bool(forKey: "AutoConfigureNetworkServices")).intValue)
-        self.autoConfigureNetworkServices = defaults.bool(forKey: "AutoConfigureNetworkServices")
+        self.autoConfigCheckBox.state = NSControl.StateValue(rawValue: NSNumber(value: defaults.bool(forKey: USERDEFAULTS_AUTO_CONFIGURE_NETWORK_SERVICES)).intValue)
+        self.autoConfigureNetworkServices = defaults.bool(forKey: USERDEFAULTS_AUTO_CONFIGURE_NETWORK_SERVICES)
         
-        if let services = defaults.array(forKey: "Proxy4NetworkServices") {
+        if let services = defaults.array(forKey: USERDEFAULTS_PROXY4_NETWORK_SERVICES) {
             selectedNetworkServices = NSMutableSet(array: services)
         } else {
             selectedNetworkServices = NSMutableSet()
@@ -45,8 +45,8 @@ class ProxyPreferencesController: NSWindowController, NSWindowDelegate, NSTableV
         ProxyConfHelper.disableProxy("hi")
         
         let defaults = UserDefaults.standard
-        defaults.setValue(selectedNetworkServices.allObjects, forKeyPath: "Proxy4NetworkServices")
-        defaults.setValue(autoConfigureNetworkServices, forKey: "AutoConfigureNetworkServices")
+        defaults.setValue(selectedNetworkServices.allObjects, forKeyPath: USERDEFAULTS_PROXY4_NETWORK_SERVICES)
+        defaults.setValue(autoConfigureNetworkServices, forKey: USERDEFAULTS_AUTO_CONFIGURE_NETWORK_SERVICES)
         
         defaults.synchronize()
         
