@@ -202,7 +202,8 @@ import Alamofire
             for index in 0..<urls.count {
                 if let profileDict = ParseAppURLSchemes(URL(string: urls[index])) {
                     let profile = ServerProfile.fromDictionary(profileDict as [String : AnyObject])
-                    let result = regex?.matches(in: profile.remark, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSMakeRange(0, profile.remark.count))
+                    let remark = profile.title()
+                    let result = regex?.matches(in: remark, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSMakeRange(0, remark.count))
                     
                     if regex == nil || result!.count <= 0 {
                         profiles.append(profile)
