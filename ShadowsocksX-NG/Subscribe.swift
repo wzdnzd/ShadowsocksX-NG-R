@@ -135,7 +135,7 @@ import Alamofire
         ret["autoUpdateEnable"] = data.autoUpdateEnable as AnyObject
         return ret
     }
-    fileprivate func sendRequest(url: String, options: Any, callback: @escaping (String) -> Void) {
+    fileprivate func sendRequest(url: String, inform: Bool=true, options: Any, callback: @escaping (String) -> Void) {
         if url.isEmpty { return }
         let headers: HTTPHeaders = [
             //            "Authorization": "Basic U2hhZG93c29ja1gtTkctUg==",
@@ -145,16 +145,16 @@ import Alamofire
             "User-Agent": "ShadowsocksX-NG-R " + (getLocalInfo()["CFBundleShortVersionString"] as! String) + " Version " + (getLocalInfo()["CFBundleVersion"] as! String)
         ]
         
-        AF.request(url, headers: headers)
-            .responseString{
-                response in
-                do {
-                    let value = try response.result.get()
-                    callback(value)
-                } catch {
-                    callback("")
+        Network.sharedSession.request(url, headers: headers).responseString{ response in
+            do {
+                let value = try response.result.get()
+                callback(value)
+            } catch {
+                callback("")
+                if inform {
                     self.pushNotification(title: "请求失败", subtitle: "", info: "发送到\(url)的请求失败，请检查您的网络")
                 }
+            }
         }
     }
     func setMaxCount(initMaxCount:Int) {
@@ -260,7 +260,7 @@ import Alamofire
         
         if !isActive && !delete { return }
         
-        sendRequest(url: self.subscribeFeed, options: "", callback: { resString in
+        sendRequest(url: self.subscribeFeed, inform: inform, options: "", callback: { resString in
             if resString == "" { return }
             updateServerHandler(resString: resString, delete: delete)
             self.cache = resString

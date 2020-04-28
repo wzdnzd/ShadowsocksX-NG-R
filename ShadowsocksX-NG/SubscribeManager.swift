@@ -75,7 +75,7 @@ class SubscribeManager:NSObject{
         subscribes.forEach { s in
             if (s.isActive && (!auto || s.getAutoUpdateEnable())){
                 dispatch.enter()
-                queue.async {
+                queue.async(group: dispatch) {
                     s.updateServerFromFeed(inform: inform)
                     dispatch.leave()
                 }
