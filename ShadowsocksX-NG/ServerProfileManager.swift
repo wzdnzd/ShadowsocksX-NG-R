@@ -107,25 +107,15 @@ class ServerProfileManager: NSObject {
         return nil
     }
     
-    func isExisted(profile: ServerProfile) -> (Bool, Int){
+    func isDuplicatedOrExists(profile: ServerProfile) -> (Bool, Int, Bool){
         for (index, value) in profiles.enumerated() {
-            // 同一个服务器可以放在不同的分组中，加上分组名判断 by Ray
-            let ret = (value.serverHost == profile.serverHost && value.serverPort == profile.serverPort && value.ssrGroup == profile.ssrGroup)
-            if ret {
-                return (ret, index)
+            if value.isSame(profile: profile) {
+                return (true, index, true)
+            } else if (value.serverHost == profile.serverHost && value.serverPort == profile.serverPort) {
+                return (true, index, false)
             }
         }
-        return (false, -1)
-    }
-    
-    func isDuplicated(profile: ServerProfile) -> (Bool, Int){
-        for (index, value) in profiles.enumerated() {
-            let ret = value.isSame(profile: profile)
-            if ret {
-                return (ret, index)
-            }
-        }
-        return (false, -1)
+        return (false, -1, false)
     }
 
     func importConfigFile() {

@@ -845,12 +845,13 @@ class MainMenuManager: NSObject, NSUserNotificationCenterDelegate {
                 speedMonitor = NetSpeedMonitor()
             }
             statusItem?.length = 85
-            speedTimer = Timer.scheduledTimer(withTimeInterval: repeatTimeinterval, repeats: true, block: {[weak self] (timer) in
+            speedTimer = Timer(timeInterval: repeatTimeinterval, repeats: true) {[weak self] (timer) in
                 guard let w = self else {return}
                 w.speedMonitor?.timeInterval(w.repeatTimeinterval, downloadAndUploadSpeed: { (down, up) in
                     w.statusItemView.setRateData(up: Float(up), down: Float(down))
                 })
-            })
+                }
+                RunLoop.main.add(speedTimer!, forMode: RunLoop.Mode.common)
         }else{
             speedTimer?.invalidate()
             speedTimer = nil

@@ -130,8 +130,6 @@ import Cocoa
                 && self.ssrObfs == profile.ssrObfs
                 && self.ssrObfsParam == profile.ssrObfsParam
                 && self.ssrProtocolParam == profile.ssrProtocolParam
-                && self.remark == profile.remark
-            // && self.ssrGroup == profile.ssrGroup
         }
         return result
     }

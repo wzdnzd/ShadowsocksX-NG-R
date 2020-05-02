@@ -138,8 +138,6 @@ import Alamofire
     fileprivate func sendRequest(url: String, inform: Bool=true, options: Any, callback: @escaping (String) -> Void) {
         if url.isEmpty { return }
         let headers: HTTPHeaders = [
-            //            "Authorization": "Basic U2hhZG93c29ja1gtTkctUg==",
-            //            "Accept": "application/json",
             "Cache-control": "no-cache",
             "token": self.token,
             "User-Agent": "ShadowsocksX-NG-R " + (getLocalInfo()["CFBundleShortVersionString"] as! String) + " Version " + (getLocalInfo()["CFBundleVersion"] as! String)
@@ -185,8 +183,6 @@ import Alamofire
             // hold if user fill a maxCount larger then server return
             // Should push a notification about it and correct the user filled maxCount?
             let maxN = (self.maxCount > urls.count) ? urls.count : (self.maxCount == -1) ? urls.count: self.maxCount
-            // TODO change the loop into random pick
-            var profiles = [ServerProfile]()
             
             var regex: NSRegularExpression?
             
@@ -199,14 +195,37 @@ import Alamofire
             }
             
             var count = 0
+            let beforeCount = self.profileMgr.profiles.count
+            // 原有的 group 中的 profile 全部清除
+            self.profileMgr.profiles = self.profileMgr.profiles.filter { $0.ssrGroup != self.getGroupName()}
+            let cleanCount = beforeCount - self.profileMgr.profiles.count
+            
+            var successCount = 0
+            var dupCount = 0
+            var existCount = 0
+
             for index in 0..<urls.count {
                 if let profileDict = ParseAppURLSchemes(URL(string: urls[index])) {
                     let profile = ServerProfile.fromDictionary(profileDict as [String : AnyObject])
+                    
                     let remark = profile.title()
                     let result = regex?.matches(in: remark, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSMakeRange(0, remark.count))
                     
                     if regex == nil || result!.count <= 0 {
-                        profiles.append(profile)
+                        let (exists, existIndex, duplicated) = self.profileMgr.isDuplicatedOrExists(profile: profile)
+                        if duplicated {
+                            dupCount += 1
+                            continue
+                        }
+                        
+                        if exists {
+                            self.profileMgr.profiles.replaceSubrange((existIndex..<existIndex + 1), with: [profile])
+                            existCount += 1
+                            continue
+                        }
+                        
+                        self.profileMgr.profiles.append(profile)
+                        successCount += 1
                         count += 1
                     }
                 }
@@ -214,42 +233,9 @@ import Alamofire
                     break
                 }
             }
-            
-            // clear and add
-            let clearOldGroup = true
-            let group = profiles.first?.ssrGroup
-            let groupSame = profiles.allSatisfy({ $0.ssrGroup == group })
-            var cleanCount = 0
-            if groupSame && clearOldGroup {
-                // 原有的 group 中的 profile 全部清除
-                cleanCount = self.profileMgr.profiles.filter { $0.ssrGroup == group }.count
-                self.profileMgr.profiles = self.profileMgr.profiles.filter { $0.ssrGroup != group}
-            }
-            
-            
-            if !delete {
-                var successCount = 0
-                var dupCount = 0
-                var existCount = 0
-                for profile in profiles {
-                    let (dupResult, _) = self.profileMgr.isDuplicated(profile: profile)
-                    let (existResult, existIndex) = self.profileMgr.isExisted(profile: profile)
-                    if dupResult {
-                        dupCount += 1
-                        continue
-                    }
-                    if existResult {
-                        self.profileMgr.profiles.replaceSubrange((existIndex..<existIndex + 1), with: [profile])
-                        existCount += 1
-                        continue
-                    }
-                    self.profileMgr.profiles.append(profile)
-                    successCount += 1
-                }
-                
-                if inform {
-                    pushNotification(title: "成功更新订阅", subtitle: "总数:\(maxN) 成功:\(successCount) 清除:\(cleanCount) 重复:\(dupCount) 已存在:\(existCount)", info: "更新来自\(subscribeFeed)的订阅")
-                }
+                        
+            if inform {
+                pushNotification(title: "成功更新订阅", subtitle: "总数:\(maxN) 成功:\(successCount) 清除:\(cleanCount) 重复:\(dupCount) 已存在:\(existCount)", info: "更新来自\(subscribeFeed)的订阅")
             }
             
             self.profileMgr.save()
@@ -258,7 +244,16 @@ import Alamofire
             }
         }
         
-        if !isActive && !delete { return }
+        if delete {
+            self.profileMgr.profiles = self.profileMgr.profiles.filter { $0.ssrGroup != self.getGroupName()}
+            self.profileMgr.save()
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(name: NOTIFY_UPDATE_MAINMENU, object: nil)
+            }
+            return
+        }
+        
+        if !isActive {return}
         
         sendRequest(url: self.subscribeFeed, inform: inform, options: "", callback: { resString in
             if resString == "" { return }

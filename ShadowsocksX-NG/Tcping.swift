@@ -100,7 +100,7 @@ class Tcping {
         
         neverSpeedTestBefore = false
         count = 5
-        self.timer = Timer.scheduledTimer(withTimeInterval: Tcping.timeout+0.1, repeats: true) { [weak self] (t) in
+        self.timer = Timer(timeInterval: Tcping.timeout+0.1, repeats: true) { [weak self] (t) in
             guard let w = self else {return}
             if w.count > 0 {
                 for item in SerMgr.profiles {
@@ -150,5 +150,6 @@ class Tcping {
                 ConnectTestigManager.sync(SerMgr: SerMgr, fastestId: fastestId, fastestSpeed: fastestSpeed, title: "TCP测试完成！最快", inform: inform)
             }
         }
+        RunLoop.main.add(self.timer!, forMode: RunLoop.Mode.common)
     }
 }
