@@ -45,5 +45,6 @@ static NSString * const USERDEFAULTS_TIME_INTERAVAL_DALAY_TEST_ENABLE = @"TimeIn
 static NSString * const USERDEFAULTS_TIME_INTERAVAL_SUBSCRIBE_UPDATE_ENABLE = @"TimeInteraval.SubscribeUpdateEnable";
 static NSString * const USERDEFAULTS_TIME_INTERAVAL_DALAY_TEST_TIME = @"TimeInteraval.DelayTestTime";
 static NSString * const USERDEFAULTS_TIME_INTERAVAL_SUBSCRIBE_UPDATE_TIME = @"TimeInteraval.SubscribeUpdateTime";
+static NSString * const USERDEFAULTS_PROXY_EXCEPTIONS = @"ProxyExceptions";
 
 #endif /* Configure_h */

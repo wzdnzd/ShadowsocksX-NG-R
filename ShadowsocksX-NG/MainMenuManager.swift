@@ -110,7 +110,8 @@ class MainMenuManager: NSObject, NSUserNotificationCenterDelegate {
             USERDEFAULTS_TIME_INTERAVAL_DALAY_TEST_ENABLE: true,
             USERDEFAULTS_TIME_INTERAVAL_SUBSCRIBE_UPDATE_ENABLE: true,
             USERDEFAULTS_TIME_INTERAVAL_DALAY_TEST_TIME: NSNumber(value: 30 as UInt16),
-            USERDEFAULTS_TIME_INTERAVAL_SUBSCRIBE_UPDATE_TIME: NSNumber(value: 3 as UInt16)
+            USERDEFAULTS_TIME_INTERAVAL_SUBSCRIBE_UPDATE_TIME: NSNumber(value: 3 as UInt16),
+            USERDEFAULTS_PROXY_EXCEPTIONS: "127.0.0.1,localhost"
         ])
         
         let notifyCenter = NotificationCenter.default
@@ -845,6 +846,7 @@ class MainMenuManager: NSObject, NSUserNotificationCenterDelegate {
                 speedMonitor = NetSpeedMonitor()
             }
             statusItem?.length = 85
+            if speedTimer == nil {
             speedTimer = Timer(timeInterval: repeatTimeinterval, repeats: true) {[weak self] (timer) in
                 guard let w = self else {return}
                 w.speedMonitor?.timeInterval(w.repeatTimeinterval, downloadAndUploadSpeed: { (down, up) in
@@ -852,6 +854,7 @@ class MainMenuManager: NSObject, NSUserNotificationCenterDelegate {
                 })
                 }
                 RunLoop.main.add(speedTimer!, forMode: RunLoop.Mode.common)
+            }
         }else{
             speedTimer?.invalidate()
             speedTimer = nil

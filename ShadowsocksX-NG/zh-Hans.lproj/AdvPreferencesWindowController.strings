@@ -40,3 +40,5 @@
 
 /* Class = "NSButtonCell"; title = "Enable Verbose Mode"; ObjectID = "dCD-gg-I2i"; */
 "dCD-gg-I2i.title" = "启用 Verbose 模式";
+
+"xcB-yu-ghf.title" = "忽略代理"

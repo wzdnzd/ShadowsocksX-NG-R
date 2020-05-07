@@ -115,6 +115,25 @@ GCDWebServer *webServer = nil;
     }
 }
 
++ (void)addArguments4ManualSpecifyProxyExceptions:(NSMutableArray*) args {
+    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+
+    NSString* rawExceptions = [defaults stringForKey:USERDEFAULTS_PROXY_EXCEPTIONS];
+    if (rawExceptions) {
+        NSCharacterSet* whites = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+        NSMutableCharacterSet* seps = [NSMutableCharacterSet characterSetWithCharactersInString:@",、"];
+        [seps formUnionWithCharacterSet:whites];
+
+        NSArray* exceptions = [rawExceptions componentsSeparatedByCharactersInSet:seps];
+        for (NSString* domainOrHost in exceptions) {
+            if ([domainOrHost length] > 0) {
+                [args addObject:@"-x"];
+                [args addObject:domainOrHost];
+            }
+        }
+    }
+}
+
 + (void)enablePACProxy:(NSString*) PACFilePath {
     //start server here and then using the string next line
     //next two lines can open gcdwebserver and work around pac file
@@ -126,6 +145,7 @@ GCDWebServer *webServer = nil;
     NSMutableArray* args = [@[@"--mode", @"auto", @"--pac-url", [url absoluteString]]mutableCopy];
     
     [self addArguments4ManualSpecifyNetworkServices:args];
+    [self addArguments4ManualSpecifyProxyExceptions:args];
     [self callHelper:args];
 }
 
@@ -143,6 +163,7 @@ GCDWebServer *webServer = nil;
     }
     
     [self addArguments4ManualSpecifyNetworkServices:args];
+    [self addArguments4ManualSpecifyProxyExceptions:args];
     [self callHelper:args];
     [self stopPACServer];
 }
@@ -162,6 +183,7 @@ GCDWebServer *webServer = nil;
     }
     
     [self addArguments4ManualSpecifyNetworkServices:args];
+    [self addArguments4ManualSpecifyProxyExceptions:args];
     [self callHelper:args];
     [self stopPACServer];
 }
@@ -169,6 +191,7 @@ GCDWebServer *webServer = nil;
 + (void)disableProxy:(NSString*) PACFilePath {
     NSMutableArray* args = [@[@"--mode", @"off"]mutableCopy];
     [self addArguments4ManualSpecifyNetworkServices:args];
+    [self addArguments4ManualSpecifyProxyExceptions:args];
     [self callHelper:args];
     [self stopPACServer];
 }
